@@ -1,0 +1,16 @@
+{
+  "name": "beaveden",
+  "private": true,
+  "version": "0.1.0",
+  "license": "MPL-2.0",
+  "scripts": {
+    "dev": "pnpm --parallel -r dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "prettier": "^3.0.0",
+    "eslint": "^9.0.0"
+  }
+}
