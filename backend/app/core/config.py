@@ -11,19 +11,22 @@ import secrets
 class ConfigSettings(BaseSettings):
     # Basic config
     PROJECT_NAME: str = "Beaveden"
+    PROJECT_ROOT: Path = Path(__file__).resolve().parents[2] 
     VERSION: str = "0.1.0"
     API_V1_STR: str = "/api/v1"
+    IS_PACKAGED: bool = False
 
     # Environment config
     ENV: str = os.getenv("ENV", "development")
     DEBUG: bool = os.getenv("DEBUG", "True") == "True"
     DB_ECHO: bool = DEBUG
 
-    # Security config
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
+    # JWT Security config
+    JWT_ALGORITHM: str = "HS256"
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
+    JWT_REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
     ADDITIONAL_CORS_ORIGINS: List[str] = []
-    
+
     # Electron integration
     ELECTRON_USER_DATA_PATH: Optional[str] = Field(
         default=None,
@@ -58,21 +61,26 @@ class ConfigSettings(BaseSettings):
             'linux': Path.home() / '.local' / 'share' / 'beaveden',
             'windows': Path(os.getenv('APPDATA')) / 'Beaveden'
         }.get(sys.platform, Path.home() / '.beaveden')
-        
         return system_data_dir
     
     @property
     def DATABASE_URL(self) -> str:
-        if self.ENV == "testing":
-            return "sqlite:///./test.db"
-       
-        if self.ENV == "development":
-            db_path = self.USER_DATA_PATH / "dev.db"
-        else:
-            db_path = self.USER_DATA_PATH / "beaveden.db"
-       
+        user_data_path = self.USER_DATA_PATH
+        if type(user_data_path) == str:
+            user_data_path = Path(user_data_path)
+        db_path = user_data_path / "beaveden.db"
         db_path.parent.mkdir(parents=True, exist_ok=True)
         return f"sqlite:///{db_path}"
+        # if self.ENV == "testing":
+        #     return "sqlite:///./test.db"
+       
+        # if self.ENV == "development":
+        #     db_path = self.PROJECT_ROOT / "data" / "dev.db"
+        # else:
+        #     db_path = self.USER_DATA_PATH / "beaveden.db"
+       
+        # db_path.parent.mkdir(parents=True, exist_ok=True)
+        # return f"sqlite:///{db_path}"
 
     @property
     def SECRET_KEY(self) -> str:

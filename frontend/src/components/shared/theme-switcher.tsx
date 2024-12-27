@@ -8,13 +8,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useThemeStore } from "@/stores/theme.store"
-import { type Theme } from "@/types/theme"
+import { Theme } from "@/types/enums"
 
 const themes: { value: Theme; label: string; }[] = [
-  { value: "fresh", label: "Fresh Green" },
-  { value: "natural", label: "Natural Green" },
-  { value: "ocean", label: "Ocean Blue" },
-  { value: "sunset", label: "Sunset Orange" },
+  { value: Theme.FRESH, label: "Fresh Green" },
+  { value: Theme.NATURAL, label: "Natural Green" },
+  { value: Theme.OCEAN, label: "Ocean Blue" },
+  { value: Theme.SUNSET, label: "Sunset Orange" },
 ]
 
 export function ThemeSwitcher() {

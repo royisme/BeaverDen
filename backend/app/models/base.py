@@ -1,13 +1,12 @@
-# backend/app/db/base.py
-from datetime import datetime
+# app/models/base.py
+from datetime import datetime, timezone
 import uuid
-from typing import Any
-from sqlalchemy.ext.declarative import declared_attr, declarative_base
-from sqlalchemy.orm import DeclarativeMeta, Mapped, mapped_column
+from typing import Any, TypeVar
+from sqlalchemy.orm import  Mapped, mapped_column, DeclarativeBase
 from sqlalchemy import DateTime, String, event
-from sqlalchemy.ext.asyncio import AsyncAttrs
+T = TypeVar('T')
 
-class BaseClass:
+class Base(DeclarativeBase):
     """Base class for all models"""
     
     # Primary key using UUID
@@ -17,21 +16,16 @@ class BaseClass:
         default=lambda: str(uuid.uuid4())
     )
     
-    # Automatic table name generation
-    @declared_attr.directive
-    def __tablename__(cls) -> str:
-        return cls.__name__.lower()
-    
     # Timestamp fields
     created_at: Mapped[datetime] = mapped_column(
         DateTime, 
-        default=datetime.utcnow, 
+        default=lambda: datetime.now(timezone.utc),
         nullable=False
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
         nullable=False
     )
 
@@ -43,27 +37,15 @@ class BaseClass:
         }
     
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> Any:
+    def from_dict(cls: type[T], data: dict[str, Any]) -> T:
         """Create model instance from dictionary"""
         return cls(**{
-            k: v for k, v in data.items() 
+            k: v for k, v in data.items()
             if k in cls.__table__.columns.keys()
         })
-
-# Create declarative base class with BaseClass
-Base = declarative_base(cls=(BaseClass, AsyncAttrs))
 
 # Register event listeners
 @event.listens_for(Base, 'before_update', propagate=True)
 def timestamp_before_update(mapper, connection, target):
     """Update timestamp before update"""
-    target.updated_at = datetime.utcnow()
-
-# Import all models here to ensure they are registered with Base
-from app.models.user import User  # 这里会在后续实现
-from app.models.user_settings import UserSettings
-from app.models.user_session import UserSession
-from app.models.menu import Permission, Feature, MenuConfig, FeaturePermission, MenuRequiredFeature
-
-# Make sure all models are imported
-__all__ = ['Base', 'User', 'UserSettings', 'UserSession', 'Permission', 'Feature', 'MenuConfig', 'FeaturePermission', 'MenuRequiredFeature']
+    target.updated_at = datetime.now(timezone.utc)

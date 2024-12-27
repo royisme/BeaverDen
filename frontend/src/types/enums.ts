@@ -39,3 +39,7 @@ export enum MenuType {
     DELETED = "deleted"
   }
   
+  export const ApiVersion = 'v1';
+
+  export type FlowStep = 'welcome' | 'setup' | 'verification' | 'complete';
+

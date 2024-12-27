@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import system, user_init
+from app.api.v1.endpoints import system,  user_init, auth, users
 # 创建主路由器
 api_router = APIRouter()
 
@@ -14,4 +14,15 @@ api_router.include_router(
     user_init.router,
     prefix="/init",
     tags=["initialization"]
+)
+api_router.include_router(
+    auth.router,
+    prefix="/auth",
+    tags=["auth"]
+)
+
+api_router.include_router(
+    users.router,
+    prefix="/user",
+    tags=["user"]
 )

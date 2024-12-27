@@ -1,3 +1,4 @@
+// src/providers/app-providers.tsx
 import { ThemeProvider } from "@/providers/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { PropsWithChildren } from "react"

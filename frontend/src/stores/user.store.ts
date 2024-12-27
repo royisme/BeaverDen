@@ -1,178 +1,216 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import type { UserPreferences, LocalUser } from '@/types/user'
-import { Currency } from '@/types/enums'
-import { Theme } from '@/types/enums'
-import { Language } from '@/types/enums'
-
-// 扩展LocalUser类型以支持与后端的集成
-interface LocalUserWithSync extends LocalUser {
-  // 后端用户标识,用于同步
-  backendId?: string
-  // 会话令牌,用于认证
-  sessionToken?: string
-  // 上次同步时间
-  lastSyncTime?: Date
-}
+import { create } from 'zustand';
+import { localDb } from '@/lib/local-db';
+import { getApiClient } from '@/lib/api-client';
+import { useSessionStore } from '@/stores/session.store';
+import { User, UserPreferences } from '@/types/user';
 
 interface UserState {
-  // 本地用户数据
-  currentUser: LocalUserWithSync | null
-  // 存储用户是否完成初始配置
-  isConfigured: boolean
-  // 是否正在进行操作
-  isLoading: boolean
-  // 上次发生的错误
-  error: string | null
+  currentUser: User | null;
+  isLoading: boolean;
+  error: string | null;
 
-  // 初始化本地用户并与后端同步
-  initializeUser: () => Promise<void>
-  // 更新用户偏好并同步到后端
-  updatePreferences: (preferences: Partial<UserPreferences>) => Promise<void>
-  // 完成初始配置并准备同步
-  completeInitialSetup: () => Promise<void>
+  registerUser: (
+    username: string,
+    password: string,
+    email: string,
+    preferences: UserPreferences
+  ) => Promise<void>;
+  
+  loginUser: (username: string, password: string) => Promise<void>;
+  logoutUser: () => Promise<void>;
+  updatePreferences: (preferences: Partial<UserPreferences>) => Promise<void>;
+  syncUserData: () => Promise<void>;
+  loadUserData: () => Promise<void>;
 }
 
-const initialPreferences: UserPreferences = {
-  language: Language.EN,
-  currency: Currency.CAD,
-  theme: Theme.FRESH
-}
+export const useUserStore = create<UserState>((set, get) => ({
+  currentUser: null,
+  isLoading: false,
+  error: null,
 
-export const useUserStore = create<UserState>()(
-  persist(
-    (set, get) => ({
-      currentUser: null,
-      isConfigured: false,
-      isLoading: false,
-      error: null,
-
-      initializeUser: async () => {
-        set({ isLoading: true, error: null })
-        try {
-          // 首先创建本地用户数据
-          const deviceId = crypto.randomUUID()
-          const localUser: LocalUserWithSync = {
-            deviceId,
-            preferences: initialPreferences,
-            lastUpdated: new Date()
-          }
-
-          // 与后端同步,创建后端用户记录
-          const response = await fetch('/api/v1/init/user', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              device_id: deviceId,
-              ...initialPreferences
-            })
-          })
-
-          if (!response.ok) {
-            throw new Error('Failed to initialize user on backend')
-          }
-
-          const { id: backendId, session_token } = await response.json()
-
-          // 更新本地用户数据,包含后端同步信息
-          set({
-            currentUser: {
-              ...localUser,
-              backendId,
-              sessionToken: session_token,
-              lastSyncTime: new Date()
-            },
-            isLoading: false
-          })
-        } catch (error) {
-          set({ 
-            error: error instanceof Error ? error.message : 'Unknown error',
-            isLoading: false 
-          })
-        }
-      },
-
-      updatePreferences: async (newPreferences) => {
-        const { currentUser } = get()
-        if (!currentUser?.backendId) {
-          throw new Error('User not properly initialized')
-        }
-
-        set({ isLoading: true, error: null })
-        try {
-          // 先更新本地数据
-          const updatedUser = {
-            ...currentUser,
-            preferences: { ...currentUser.preferences, ...newPreferences },
-            lastUpdated: new Date()
-          }
-
-          // 然后同步到后端
-          const response = await fetch(`/api/v1/init/settings/${currentUser.backendId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${currentUser.sessionToken}`
-            },
-            body: JSON.stringify({
-              device_id: currentUser.deviceId,
-              ...updatedUser.preferences
-            })
-          })
-
-          if (!response.ok) {
-            throw new Error('Failed to sync preferences with backend')
-          }
-
-          // 更新本地状态
-          set({
-            currentUser: {
-              ...updatedUser,
-              lastSyncTime: new Date()
-            },
-            isLoading: false
-          })
-        } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Unknown error',
-            isLoading: false
-          })
-        }
-      },
-
-      completeInitialSetup: async () => {
-        const { currentUser } = get()
-        if (!currentUser?.backendId) {
-          throw new Error('Cannot complete setup: user not initialized')
-        }
-
-        try {
-          // 最后一次同步
-          await get().updatePreferences(currentUser.preferences)
-          
-          // 标记配置完成
-          set({ 
-            isConfigured: true,
-            currentUser: {
-              ...currentUser,
-              lastUpdated: new Date(),
-              lastSyncTime: new Date()
-            }
-          })
-        } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Unknown error'
-          })
-          throw error
-        }
-      }
-    }),
-    {
-      name: 'beaveden-user-storage',
-      partialize: (state) => ({
-        currentUser: state.currentUser,
-        isConfigured: state.isConfigured
-      })
+  registerUser: async (username, password, email, preferences) => {
+    set({ isLoading: true, error: null });
+    try {
+      const apiClient = await getApiClient();
+      const result = await apiClient.register(username, password, email, preferences);
+      console.log('User registration result:', result);
+      // 保存用户数据到本地
+      console.log('start call saveUser', result.user)
+      await localDb.saveUser(result.user);
+      console.log('saveUser done')
+      await localDb.setCurrentUser(result.user.id);
+      console.log('setCurrentUser done')
+      // 保存会话
+      console.log('start call setSession', result.token)
+      const sessionStore = useSessionStore.getState();
+      await sessionStore.setSession(result.token);
+      console.log('setSession done')
+      
+      set({ 
+        currentUser: result.user,
+        isLoading: false 
+      });
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : 'Registration failed',
+        isLoading: false 
+      });
+      throw error;
     }
-  )
-)
+  },
+
+  loginUser: async (username, password) => {
+    set({ isLoading: true, error: null });
+    try {
+      const apiClient = await getApiClient();
+      const result = await apiClient.login(username, password);
+      
+      // 保存或更新本地用户数据
+      await localDb.saveUser(result.user);
+      await localDb.setCurrentUser(result.user.id);
+      
+      // 保存会话
+      const sessionStore = useSessionStore.getState();
+      await sessionStore.setSession(result.token);
+      
+      set({ 
+        currentUser: result.user,
+        isLoading: false 
+      });
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : 'Login failed',
+        isLoading: false 
+      });
+      throw error;
+    }
+  },
+
+  logoutUser: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      // 清理会话
+      const sessionStore = useSessionStore.getState();
+      await sessionStore.clearSession();
+      
+      set({ 
+        currentUser: null,
+        isLoading: false 
+      });
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : 'Logout failed',
+        isLoading: false 
+      });
+      throw error;
+    }
+  },
+
+  updatePreferences: async (preferences) => {
+    const { currentUser } = get();
+    if (!currentUser) throw new Error('No active user');
+
+    set({ isLoading: true, error: null });
+    try {
+      const apiClient = await getApiClient();
+      const updatedPreferences = {
+        ...currentUser.preferences,
+        ...preferences,
+        lastModified: new Date()
+      };
+      
+      // 先更新本地数据
+      await localDb.savePreferences(currentUser.id, updatedPreferences);
+      
+      // 同步到服务器
+      const updatedUser = await apiClient.updatePreferences(
+        currentUser.id, 
+        updatedPreferences
+      );
+      
+      // 更新本地用户数据
+      await localDb.saveUser(updatedUser);
+      
+      set({ 
+        currentUser: updatedUser,
+        isLoading: false 
+      });
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : 'Failed to update preferences',
+        isLoading: false 
+      });
+      throw error;
+    }
+  },
+  
+  syncUserData: async () => {
+    const { currentUser } = get();
+    if (!currentUser) throw new Error('No active user');
+
+    set({ isLoading: true, error: null });
+    try {
+      const syncState = await localDb.getSyncState(currentUser.id);
+      if (!syncState?.pendingChanges) {
+        set({ isLoading: false });
+        return;
+      }
+
+      const apiClient = await getApiClient();
+      const updatedUser = await apiClient.syncUserData(
+        currentUser.id,
+        syncState.lastSyncTime
+      );
+      
+      // 更新本地数据
+      await localDb.saveUser(updatedUser);
+      
+      set({ 
+        currentUser: updatedUser,
+        isLoading: false 
+      });
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : 'Sync failed',
+        isLoading: false 
+      });
+      throw error;
+    }
+  },
+
+  loadUserData: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      // 获取当前用户ID
+      const currentUserData = await localDb.getCurrentUser();
+      if (!currentUserData?.userId) {
+        throw new Error('No user data found');
+      }
+
+      // 从本地数据库加载用户信息
+      const user = await localDb.getUser(currentUserData.userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      // 加载用户偏好设置
+      const preferences = await localDb.getLatestPreferences(user.id);
+      if (preferences) {
+        user.preferences = preferences;
+      }
+
+      // 设置当前用户状态
+      set({ 
+        currentUser: user,
+        isLoading: false 
+      });
+
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : 'Failed to load user data',
+        isLoading: false 
+      });
+      throw error;
+    }
+  }
+}));

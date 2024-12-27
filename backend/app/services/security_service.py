@@ -1,5 +1,4 @@
 # backend/app/core/security.py
-from cryptography.fernet import Fernet
 import base64
 from typing import Optional
 from app.core.runtime_config import RuntimeConfigManager

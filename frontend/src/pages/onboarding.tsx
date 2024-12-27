@@ -1,72 +1,83 @@
-'use client'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Language, Currency, Theme, FlowStep } from '@/types/enums'
+import { OnboardingData } from '@/types/user'
+import WelcomePage from '@/pages/_components/welcome-page'
+import SetupWizard from '@/pages/_components/setup-wizard'
+import CompletePage from '@/pages/_components/complete-page'
 import { useUserStore } from '@/stores/user.store'
-import WelcomePage from './_components/welcome-page'
-import SetupWizard from './_components/setup-wizard'
-import CompletePage from './_components/complete-page'
-
-// 引导流程的步骤
-type FlowStep = 'welcome' | 'setup' | 'complete'
+import { useToast } from "@/hooks/use-toast"
 
 export default function OnboardingFlow() {
-  const { currentUser, isConfigured, initializeUser } = useUserStore()
+  const navigate = useNavigate()
+  const { registerUser } = useUserStore()
+  const { toast } = useToast()
   const [currentStep, setCurrentStep] = useState<FlowStep>('welcome')
+  const [onboardingData, setOnboardingData] = useState<OnboardingData>({
+    username: '',
+    email: '',
+    password: '',
+    preferences: {
+      language: Language.EN,
+      currency: Currency.CAD,
+      theme: Theme.FRESH
+    }
+  })
 
-  // 当组件加载时，检查初始化状态
-  useEffect(() => {
-    if (!currentUser && !isConfigured) {
-      initializeUser().catch(error => {
-        console.error('Failed to initialize user:', error)
-        // 这里可以添加错误处理UI
+  // 处理用户退出
+  const handleExit = () => {
+    // 直接返回登录页，不保存任何数据
+    navigate('/landing')
+  }
+
+  // 处理每个步骤的完成
+  const handleWelcomeComplete = (data: {
+    username: string;
+    email: string;
+    password: string;
+    preferences: { language: Language }
+  }) => {
+    // 合并初始偏好设置和用户选择的语言
+    setOnboardingData(prev => ({
+      ...prev,
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      preferences: {
+        ...prev.preferences,
+        language: data.preferences.language
+      }
+    }))
+    setCurrentStep('setup')
+  }
+
+  const handleSetupComplete = (preferences: { currency: Currency; theme: Theme }) => {
+    setOnboardingData(prev => ({
+      ...prev,
+      preferences: {
+        ...prev.preferences,
+        ...preferences,
+        lastModified: new Date()
+      }
+    }))
+    setCurrentStep('complete')
+  }
+
+  const handleFinalSubmit = async () => {
+    try {
+      const { username, email, password, preferences } = onboardingData
+      // 注册用户
+      console.log('Starting user registration:', username, email, password, preferences)  
+      await registerUser(username, password, email, preferences)
+      // 注册成功后跳转到仪表板
+      navigate('/dashboard')
+    } catch (error) {
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "Failed to create account",
+        variant: "destructive",
       })
     }
-  }, [currentUser, isConfigured, initializeUser])
-
-  // 处理步骤导航
-  const handleNext = () => {
-    switch (currentStep) {
-      case 'welcome':
-        setCurrentStep('setup')
-        break
-      case 'setup':
-        setCurrentStep('complete')
-        break
-      case 'complete':
-        // 完成引导流程后，这里可以重定向到主应用
-        window.location.href = '/dashboard'
-        break
-    }
-  }
-
-  const handleBack = () => {
-    switch (currentStep) {
-      case 'setup':
-        setCurrentStep('welcome')
-        break
-      case 'complete':
-        setCurrentStep('setup')
-        break
-      // welcome 页面不需要返回
-    }
-  }
-
-  // 如果用户已完成配置，直接重定向到主应用
-  useEffect(() => {
-    if (isConfigured) {
-      window.location.href = '/dashboard'
-    }
-  }, [isConfigured])
-
-  // 如果还在初始化中，显示加载状态
-  if (!currentUser) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
-          <p className="text-lg text-muted-foreground">Initializing your experience...</p>
-        </div>
-      </div>
-    )
   }
 
   // 渲染当前步骤
@@ -74,21 +85,26 @@ export default function OnboardingFlow() {
     switch (currentStep) {
       case 'welcome':
         return (
-          <WelcomePage 
-            onNext={handleNext}
+          <WelcomePage
+            onNext={handleWelcomeComplete}
+            onExit={handleExit}
           />
         )
       case 'setup':
         return (
           <SetupWizard
-            onNext={handleNext}
-            onBack={handleBack}
+            initialPreferences={onboardingData.preferences}
+            onNext={handleSetupComplete}
+            onBack={() => setCurrentStep('welcome')}
+            onExit={handleExit}
           />
         )
       case 'complete':
         return (
           <CompletePage
-            onFinish={handleNext}
+            onFinish={handleFinalSubmit}
+            onBack={() => setCurrentStep('setup')}
+            onExit={handleExit}
           />
         )
       default:
@@ -96,12 +112,10 @@ export default function OnboardingFlow() {
     }
   }
 
-  // 使用渐变背景，确保整个流程视觉上的连贯性
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
-      <div className="container mx-auto">
-        {/* 使用简单的淡入淡出动画进行页面切换 */}
-        <div className="transition-opacity duration-300 ease-in-out">
+    <div id="onboarding-page" className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-background to-background/80">
+      <div id="onboarding-container" className="container mx-auto">
+        <div id="onboarding-content" className="transition-opacity duration-300 ease-in-out">
           {renderStep()}
         </div>
       </div>

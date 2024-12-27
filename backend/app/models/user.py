@@ -1,25 +1,21 @@
 # app/models/user.py
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List
-from sqlalchemy import String, Boolean, DateTime, Text, Enum as SQLEnum
+from sqlalchemy import String, Boolean, DateTime, Text, Enum as SQLEnum, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from passlib.context import CryptContext
-import enum
+
 
 from app.models.base import Base
 
+from app.models.enums import AccountStatus, Language, Currency, Theme
 # 密码加密上下文
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 
-class AccountStatus(enum.Enum):
-    """用户账户状态"""
-    ACTIVE = "active"
-    SUSPENDED = "suspended"
-    DELETED = "deleted"
 
 class User(Base):
     """用户模型"""
-    
+    __tablename__ = "user"
     # 基本信息字段
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -33,22 +29,19 @@ class User(Base):
         default=AccountStatus.ACTIVE,
         nullable=False
     )
-    is_first_login: Mapped[bool] = mapped_column(Boolean, default=True)
-    last_login_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
-    
-    # 关系定义
+    last_login_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    sessions: Mapped[List["UserSession"]] = relationship(
+        "UserSession",
+        cascade="all, delete-orphan"
+    )
+    #关系定义
     settings: Mapped["UserSettings"] = relationship(
         "UserSettings",
-        back_populates="user",
         uselist=False,
         cascade="all, delete-orphan"
     )
     
-    sessions: Mapped[List["UserSession"]] = relationship(
-        "UserSession",
-        back_populates="user",
-        cascade="all, delete-orphan"
-    )
+
     
     # 密码处理方法
     def set_password(self, password: str) -> None:
@@ -80,17 +73,156 @@ class User(Base):
     # 登录相关方法
     def update_last_login(self) -> None:
         """更新最后登录时间"""
-        self.last_login_at = datetime.utcnow()
-        if self.is_first_login:
-            self.is_first_login = False
+        self.last_login_at = datetime.now(timezone.utc)
+
     
     # 辅助方法
     def to_dict(self) -> dict:
         """转换为字典（重写基类方法以排除敏感信息）"""
-        d = super().to_dict()
-        d.pop("password_hash", None)  # 移除密码哈希
-        return d
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "nickname": self.nickname,
+            "avatarPath": self.avatar_path,
+            "accountStatus": self.account_status.value,
+            "lastLoginAt": self.last_login_at.isoformat() if self.last_login_at else None,
+            "settings": self.settings.to_dict() if self.settings else None
+        }
 
     def __repr__(self) -> str:
         """字符串表示"""
         return f"<User {self.username}>"
+    
+class UserSession(Base):
+    """用户会话模型，存储会话和设备信息"""
+    __tablename__ = "user_session"
+    
+    # 用户关联
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("user.id", ondelete="CASCADE")
+    )
+
+    
+    # 基本设备信息
+    device_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    device_name: Mapped[Optional[str]] = mapped_column(String(255))
+    device_type: Mapped[Optional[str]] = mapped_column(String(50))
+    
+    # 扩展设备信息
+    os: Mapped[Optional[str]] = mapped_column(
+        String(255),
+        comment="操作系统信息"
+    )
+    model: Mapped[Optional[str]] = mapped_column(
+        String(255),
+        comment="设备型号信息"
+    )
+    manufacturer: Mapped[Optional[str]] = mapped_column(
+        String(255),
+        comment="设备制造商"
+    )
+    ip: Mapped[Optional[str]] = mapped_column(
+        String(45),  # IPv6 地址最长45字符
+        comment="最后已知IP地址"
+    )
+    
+    # 会话信息
+    token: Mapped[str] = mapped_column(Text, nullable=False, index=True)
+    token_expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    last_active_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.now(timezone.utc),
+        onupdate=datetime.now(timezone.utc)
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    
+    # 关系
+    # user: Mapped["User"] = relationship("User", back_populates="sessions")
+    
+    # # 辅助方法
+    # def update_device_info(self, device_info: dict) -> None:
+    #     """更新设备信息"""
+    #     for field, value in device_info.items():
+    #         setattr(self, field, value)
+    #     self.last_active_at = datetime.now(timezone.utc)
+    
+
+    @property
+    def is_expired(self) -> bool:
+        """检查会话是否过期"""
+        return datetime.now(timezone.utc) > self.token_expires_at
+    
+    def deactivate(self) -> None:
+        """停用会话"""
+        self.is_active = False
+    
+    def update_device_info(self, device_info: dict) -> None:
+        """更新设备信息
+        
+        Args:
+            device_info: 包含设备信息字段的字典
+        """
+        updateable_fields = {
+            'deviceId': 'device_id',
+            'deviceName': 'device_name',
+            'deviceType': 'device_type',
+            'os': 'os',
+            'model': 'model',
+            'manufacturer': 'manufacturer',
+            'ip': 'ip'
+        }
+
+        for field, value in updateable_fields.items():
+            if field in device_info:
+                setattr(self, value, device_info[field])
+        self.last_active_at = datetime.now(timezone.utc)
+    
+    def __repr__(self) -> str:
+        return f"<UserSession {self.id} for user {self.user_id} on device {self.device_name or self.device_id}>"
+class UserSettings(Base):
+    """user settings model"""
+    __tablename__ = "user_settings"
+
+    # foreign key relationship
+    user_id: Mapped[str] = mapped_column(
+        String(36), 
+        ForeignKey("user.id", ondelete="CASCADE"),
+        unique=True
+    )
+
+
+    # 基本设置
+    language: Mapped[Language] = mapped_column(
+        SQLEnum(Language),
+        default=Language.EN
+    )
+    currency: Mapped[Currency] = mapped_column(
+        SQLEnum(Currency),
+        default=Currency.CAD
+    )
+    theme: Mapped[Theme] = mapped_column(
+        SQLEnum(Theme),
+        default=Theme.FRESH
+    )
+    
+    # 登录设置
+    login_expire_days: Mapped[int] = mapped_column(Integer, default=7)
+    require_password_on_launch: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    # 通知设置
+    notification_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    
+    
+    def __repr__(self) -> str:
+        return f"<UserSettings for user {self.user_id}>"
+    def to_dict(self) -> dict:
+        return {
+            "language": self.language.value,
+            "currency": self.currency.value,
+            "theme": self.theme.value,
+            "loginExpireDays": self.login_expire_days,
+            "requirePasswordOnLaunch": self.require_password_on_launch,
+            "notificationEnabled": self.notification_enabled
+        }

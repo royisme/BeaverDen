@@ -1,6 +1,7 @@
 from typing import Dict, Any, List
-from app.models.user_settings import Language, Currency, Theme
-from app.models.menu import Permission, Feature, MenuConfig, SubscriptionTier
+from app.models.enums import Language, Currency, Theme, SubscriptionTier
+from app.models.menu import Permission, Feature, MenuConfig
+
 class SeedConfig:
     """all of the seed data for the database"""
     

@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+      "target": "esnext", // 或更现代的 ECMAScript 版本
+      "module": "commonjs", // 或 "esnext" 如果使用 ES 模块
+      "outDir": "./build", // 输出目录
+      "rootDir": "./", // TypeScript 文件的根目录(相对于tsconfig.json)
+      "strict": true, // 启用严格类型检查
+      "esModuleInterop": true, // 兼容 CommonJS 和 ES 模块
+      "skipLibCheck": true, // 跳过库文件的类型检查
+      "forceConsistentCasingInFileNames": true,
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true,
+      "sourceMap": true
+    },
+    "include": [
+      "./**/*.ts", // 包括当前目录及其子目录下的所有 .ts 文件
+      "./**/*.tsx" // 如果有tsx文件也包含
+    ],
+    "exclude": [
+      "node_modules",
+      "../node_modules", // 排除项目根目录的 node_modules
+      "../frontend",     // 排除 frontend 文件夹
+      "../backend"      // 排除 backend 文件夹
+    ]
+  }

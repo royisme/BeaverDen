@@ -43,7 +43,7 @@ export class ConfigManager {
   /**
    * 获取可用端口
    */
-  private async findAvailablePort(startPort: number = 3000, endPort: number = 3999): Promise<number> {
+  private async findAvailablePort(startPort: number = 8486, endPort: number = 8684): Promise<number> {
     for (let port = startPort; port <= endPort; port++) {
       if (await this.isPortAvailable(port)) {
         return port
@@ -64,7 +64,7 @@ export class ConfigManager {
       // 构建完整配置
       this.currentConfig = {
         backendPort: port,
-        appMode: process.env.NODE_ENV === 'development' ? 'development' : 'production',
+        appMode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
         timestamp: Date.now(),
         securityKeys: securityKeys
       };

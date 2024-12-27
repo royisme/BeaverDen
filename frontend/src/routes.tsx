@@ -1,53 +1,31 @@
 import { lazy } from 'react'
-import type { RouteObject } from 'react-router-dom'
-import type { MenuItem } from '@/types/menu'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
 // 懒加载页面组件
+const LandingPage = lazy(() => import('@/pages/landing'))
 const DashboardPage = lazy(() => import('@/pages/dashboard'))
 const OnboardingPage = lazy(() => import('@/pages/onboarding'))
+const LoginPage = lazy(() => import('@/pages/login'))
 
 // 定义应用布局组件
 const AppContent = lazy(() => import('@/components/layouts/app-content'))
 
-// 定义路由元信息类型
-type RouteConfig = RouteObject & {
-  key?: string
-  menuItem?: MenuItem
-  children?: RouteConfig[]
-}
+export function AppRoutes() {
+  return (
+    <Routes>
+      {/* 公共路由 - 不需要 SidebarProvider */}
+      <Route path="/landing" element={<LandingPage />} />
+      <Route path="/onboarding" element={<OnboardingPage />} />
+      <Route path="/login" element={<LoginPage />} />
 
-// 路由配置
-export const routes: RouteConfig[] = [
-  {
-    path: '/onboarding',
-    element: <OnboardingPage />,
-    key: 'onboarding',
-  },
-  {
-    path: '/',
-    key: 'root',
-    element: <AppContent />,
-    children: [
-      {
-        index: true,
+      {/* 应用路由 - 包含在 AppContent 中，自带 SidebarProvider */}
+      <Route path="/app" element={<AppContent />}>
+        <Route index element={<DashboardPage />} />
+        {/* 其他需要侧边栏的路由 */}
+      </Route>
 
-        element: <DashboardPage />
-      }
-    ]
-  }
-]
-
-// 路由守卫函数
-export function guardRoute(isConfigured: boolean, pathname: string): string | null {
-  // 如果用户未完成配置且不在引导流程页面，重定向到引导页
-  if (!isConfigured && pathname !== '/onboarding') {
-    return '/onboarding'
-  }
-  
-  // 如果用户已完成配置且在引导流程页面，重定向到仪表盘
-  if (isConfigured && pathname === '/onboarding') {
-    return '/dashboard'
-  }
-
-  return null
+      {/* 根路径重定向 */}
+      <Route path="/" element={<Navigate to="/landing" replace />} />
+    </Routes>
+  )
 }

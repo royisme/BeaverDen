@@ -21,7 +21,7 @@ export default defineConfig({
   },
   base: './',
   build: {
-    outDir: 'dist',
+    outDir: '../electron/build/',
     assetsDir: 'assets',
     assetsInlineLimit: 4096, // 小于此大小的资源会被内联为 base64
 
@@ -42,10 +42,16 @@ export default defineConfig({
 
   // 开发服务器配置
   server: {
-    port: 3000,
+    port: 5173,
     strictPort: true,
     watch: {
       usePolling: true,
     },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8486',
+        changeOrigin: true
+      }
+    }
   },
 })

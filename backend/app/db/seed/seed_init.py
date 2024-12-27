@@ -82,7 +82,7 @@ class DatabaseSeeder:
     
     def create_user_settings(self, user_id: str) -> None:
         """create default settings for new users"""
-        from app.models.user_settings import UserSettings
+        from app.models.user import UserSettings
         settings = UserSettings(
             user_id=user_id,
             **SeedConfig.get_default_user_settings()
