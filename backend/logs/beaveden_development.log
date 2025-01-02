@@ -2198,3 +2198,528 @@ WHERE ? = user_settings.user_id
 [SQL: INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
 [parameters: ('tesdb22', '$5$rounds=535000$i0ob1BrGrG1OycXQ$LOQXzdpDJIU02KVhj0dZjfGMn6z.akhVnFBLItyeVoC', None, 'rbes@22.com', None, 'ACTIVE', None, 'bf5f1002-bae7-439e-b3d3-1ad6dbe02aa0', '2024-12-27 05:38:56.882945', '2024-12-27 05:38:56.882948')]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
+2024-12-30 10:21:45.072 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 10:21:45.072 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 10:21:45.072 [INFO] __main__ - Starting application initialization...
+2024-12-30 10:21:45.073 [INFO] app.core.runtime_config - Loaded runtime config from /Users/royzhu/Library/Application Support/electron/runtime-config.json
+2024-12-30 10:21:45.073 [INFO] __main__ - Runtime configuration initialized successfully
+2024-12-30 10:21:45.073 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 10:21:45.073 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 10:21:45.077 [INFO] __main__ - Electron: Starting backend server on port 8486...
+2024-12-30 10:21:45.078 [DEBUG] asyncio - Using selector: KqueueSelector
+2024-12-30 10:21:45.087 [INFO] app.db.session - Database directory: /Users/royzhu/Library/Application Support/electron
+2024-12-30 10:21:45.087 [INFO] app.db.migrations - Looking for alembic.ini at: /Users/royzhu/software/codes/BeaverDen/backend/alembic.ini
+2024-12-30 10:21:45.087 [INFO] app.db.migrations - Starting database migration check...
+2024-12-30 10:21:45.091 [INFO] alembic.runtime.migration - Context impl SQLiteImpl.
+2024-12-30 10:21:45.091 [INFO] alembic.runtime.migration - Will assume non-transactional DDL.
+2024-12-30 10:21:45.091 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 10:21:45.091 [INFO] sqlalchemy.engine.Engine - PRAGMA main.table_info("alembic_version")
+2024-12-30 10:21:45.091 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 10:21:45.093 [INFO] sqlalchemy.engine.Engine - SELECT alembic_version.version_num 
+FROM alembic_version
+2024-12-30 10:21:45.093 [INFO] sqlalchemy.engine.Engine - [generated in 0.00009s] ()
+2024-12-30 10:21:45.093 [INFO] sqlalchemy.engine.Engine - ROLLBACK
+2024-12-30 10:21:45.093 [INFO] app.db.migrations - Current database revision: 8c96f0a11496
+2024-12-30 10:21:45.093 [INFO] app.db.migrations - Target head revision: 05f202836a5b
+2024-12-30 10:21:45.093 [INFO] app.db.migrations - Database needs upgrade, running migration...
+2024-12-30 10:26:05.335 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 10:26:05.335 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 10:26:05.335 [INFO] __main__ - Starting application initialization...
+2024-12-30 10:26:05.335 [INFO] app.core.runtime_config - Loaded runtime config from /Users/royzhu/Library/Application Support/electron/runtime-config.json
+2024-12-30 10:26:05.335 [INFO] __main__ - Runtime configuration initialized successfully
+2024-12-30 10:26:05.336 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 10:26:05.336 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 10:26:05.339 [INFO] __main__ - Electron: Starting backend server on port 8486...
+2024-12-30 10:26:05.341 [DEBUG] asyncio - Using selector: KqueueSelector
+2024-12-30 10:26:05.348 [INFO] app.db.session - Database directory: /Users/royzhu/Library/Application Support/electron
+2024-12-30 10:26:05.348 [INFO] app.db.migrations - Looking for alembic.ini at: /Users/royzhu/software/codes/BeaverDen/backend/alembic.ini
+2024-12-30 10:26:05.348 [INFO] app.db.migrations - Starting database migration check...
+2024-12-30 10:26:05.352 [INFO] alembic.runtime.migration - Context impl SQLiteImpl.
+2024-12-30 10:26:05.352 [INFO] alembic.runtime.migration - Will assume non-transactional DDL.
+2024-12-30 10:26:05.352 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 10:26:05.352 [INFO] sqlalchemy.engine.Engine - PRAGMA main.table_info("alembic_version")
+2024-12-30 10:26:05.352 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 10:26:05.354 [INFO] sqlalchemy.engine.Engine - SELECT alembic_version.version_num 
+FROM alembic_version
+2024-12-30 10:26:05.354 [INFO] sqlalchemy.engine.Engine - [generated in 0.00008s] ()
+2024-12-30 10:26:05.354 [INFO] sqlalchemy.engine.Engine - ROLLBACK
+2024-12-30 10:26:05.354 [INFO] app.db.migrations - Current database revision: 8c96f0a11496
+2024-12-30 10:26:05.354 [INFO] app.db.migrations - Target head revision: 05f202836a5b
+2024-12-30 10:26:05.354 [INFO] app.db.migrations - Database needs upgrade, running migration...
+2024-12-30 10:52:13.458 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 10:52:13.458 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 10:52:13.458 [INFO] __main__ - Starting application initialization...
+2024-12-30 10:52:13.458 [INFO] app.core.runtime_config - Loaded runtime config from /Users/royzhu/Library/Application Support/electron/runtime-config.json
+2024-12-30 10:52:13.459 [INFO] __main__ - Runtime configuration initialized successfully
+2024-12-30 10:52:13.459 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 10:52:13.459 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 10:52:13.463 [INFO] __main__ - Electron: Starting backend server on port 8486...
+2024-12-30 10:52:13.464 [DEBUG] asyncio - Using selector: KqueueSelector
+2024-12-30 10:52:13.472 [INFO] app.db.session - Database directory: /Users/royzhu/Library/Application Support/electron
+2024-12-30 10:52:13.472 [INFO] app.db.migrations - Looking for alembic.ini at: /Users/royzhu/software/codes/BeaverDen/backend/alembic.ini
+2024-12-30 10:52:13.472 [INFO] app.db.migrations - Starting database migration check...
+2024-12-30 10:52:13.476 [INFO] alembic.runtime.migration - Context impl SQLiteImpl.
+2024-12-30 10:52:13.476 [INFO] alembic.runtime.migration - Will assume non-transactional DDL.
+2024-12-30 10:52:13.476 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 10:52:13.476 [INFO] sqlalchemy.engine.Engine - PRAGMA main.table_info("alembic_version")
+2024-12-30 10:52:13.477 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 10:52:13.478 [INFO] sqlalchemy.engine.Engine - SELECT alembic_version.version_num 
+FROM alembic_version
+2024-12-30 10:52:13.478 [INFO] sqlalchemy.engine.Engine - [generated in 0.00008s] ()
+2024-12-30 10:52:13.478 [INFO] sqlalchemy.engine.Engine - ROLLBACK
+2024-12-30 10:52:13.478 [INFO] app.db.migrations - Current database revision: 8c96f0a11496
+2024-12-30 10:52:13.478 [INFO] app.db.migrations - Target head revision: 05f202836a5b
+2024-12-30 10:52:13.478 [INFO] app.db.migrations - Database needs upgrade, running migration...
+2024-12-30 10:55:50.705 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 10:55:50.705 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 10:55:50.705 [INFO] __main__ - Starting application initialization...
+2024-12-30 10:55:50.705 [INFO] app.core.runtime_config - Loaded runtime config from /Users/royzhu/Library/Application Support/electron/runtime-config.json
+2024-12-30 10:55:50.705 [INFO] __main__ - Runtime configuration initialized successfully
+2024-12-30 10:55:50.706 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 10:55:50.706 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 10:55:50.709 [INFO] __main__ - Electron: Starting backend server on port 8486...
+2024-12-30 10:55:50.711 [DEBUG] asyncio - Using selector: KqueueSelector
+2024-12-30 10:55:50.718 [INFO] app.db.session - Database directory: /Users/royzhu/Library/Application Support/electron
+2024-12-30 10:55:50.718 [INFO] app.db.migrations - Looking for alembic.ini at: /Users/royzhu/software/codes/BeaverDen/backend/alembic.ini
+2024-12-30 10:55:50.718 [INFO] app.db.migrations - Starting database migration check...
+2024-12-30 10:55:50.722 [INFO] alembic.runtime.migration - Context impl SQLiteImpl.
+2024-12-30 10:55:50.722 [INFO] alembic.runtime.migration - Will assume non-transactional DDL.
+2024-12-30 10:55:50.722 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 10:55:50.722 [INFO] sqlalchemy.engine.Engine - PRAGMA main.table_info("alembic_version")
+2024-12-30 10:55:50.722 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 10:55:50.724 [INFO] sqlalchemy.engine.Engine - SELECT alembic_version.version_num 
+FROM alembic_version
+2024-12-30 10:55:50.724 [INFO] sqlalchemy.engine.Engine - [generated in 0.00007s] ()
+2024-12-30 10:55:50.724 [INFO] sqlalchemy.engine.Engine - ROLLBACK
+2024-12-30 10:55:50.724 [INFO] app.db.migrations - Current database revision: 8c96f0a11496
+2024-12-30 10:55:50.724 [INFO] app.db.migrations - Target head revision: 05f202836a5b
+2024-12-30 10:55:50.724 [INFO] app.db.migrations - Database needs upgrade, running migration...
+2024-12-30 20:13:08.905 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 20:13:08.905 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 20:13:08.906 [INFO] __main__ - Starting application initialization...
+2024-12-30 20:13:08.906 [INFO] app.core.runtime_config - Loaded runtime config from /Users/royzhu/Library/Application Support/electron/runtime-config.json
+2024-12-30 20:13:08.906 [INFO] __main__ - Runtime configuration initialized successfully
+2024-12-30 20:13:08.906 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 20:13:08.906 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 20:13:08.910 [INFO] __main__ - Electron: Starting backend server on port 8486...
+2024-12-30 20:13:08.911 [DEBUG] asyncio - Using selector: KqueueSelector
+2024-12-30 20:13:08.920 [INFO] app.db.session - Database directory: /Users/royzhu/Library/Application Support/electron
+2024-12-30 20:13:08.920 [INFO] app.db.migrations - Looking for alembic.ini at: /Users/royzhu/software/codes/BeaverDen/backend/alembic.ini
+2024-12-30 20:13:08.920 [INFO] app.db.migrations - Starting database migration check...
+2024-12-30 20:13:08.924 [INFO] alembic.runtime.migration - Context impl SQLiteImpl.
+2024-12-30 20:13:08.924 [INFO] alembic.runtime.migration - Will assume non-transactional DDL.
+2024-12-30 20:13:08.924 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 20:13:08.924 [INFO] sqlalchemy.engine.Engine - PRAGMA main.table_info("alembic_version")
+2024-12-30 20:13:08.924 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 20:13:08.926 [INFO] sqlalchemy.engine.Engine - SELECT alembic_version.version_num 
+FROM alembic_version
+2024-12-30 20:13:08.926 [INFO] sqlalchemy.engine.Engine - [generated in 0.00008s] ()
+2024-12-30 20:13:08.926 [INFO] sqlalchemy.engine.Engine - ROLLBACK
+2024-12-30 20:13:08.926 [ERROR] app.db.migrations - database migration failed: Version table 'alembic_version' has more than one head present; please use get_current_heads()
+2024-12-30 20:14:26.991 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 20:14:26.991 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 20:14:26.991 [INFO] __main__ - Starting application initialization...
+2024-12-30 20:14:26.991 [INFO] app.core.runtime_config - Loaded runtime config from /Users/royzhu/Library/Application Support/electron/runtime-config.json
+2024-12-30 20:14:26.991 [INFO] __main__ - Runtime configuration initialized successfully
+2024-12-30 20:14:26.992 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 20:14:26.992 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 20:14:26.995 [INFO] __main__ - Electron: Starting backend server on port 8486...
+2024-12-30 20:14:26.996 [DEBUG] asyncio - Using selector: KqueueSelector
+2024-12-30 20:14:27.005 [INFO] app.db.session - Database directory: /Users/royzhu/Library/Application Support/electron
+2024-12-30 20:14:27.005 [INFO] app.db.migrations - Looking for alembic.ini at: /Users/royzhu/software/codes/BeaverDen/backend/alembic.ini
+2024-12-30 20:14:27.006 [INFO] app.db.migrations - Starting database migration check...
+2024-12-30 20:14:27.009 [INFO] alembic.runtime.migration - Context impl SQLiteImpl.
+2024-12-30 20:14:27.009 [INFO] alembic.runtime.migration - Will assume non-transactional DDL.
+2024-12-30 20:14:27.009 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 20:14:27.009 [INFO] sqlalchemy.engine.Engine - PRAGMA main.table_info("alembic_version")
+2024-12-30 20:14:27.009 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 20:14:27.010 [INFO] sqlalchemy.engine.Engine - PRAGMA temp.table_info("alembic_version")
+2024-12-30 20:14:27.010 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 20:14:27.010 [INFO] sqlalchemy.engine.Engine - ROLLBACK
+2024-12-30 20:14:27.010 [INFO] app.db.migrations - Current database revision: None
+2024-12-30 20:14:27.011 [INFO] app.db.migrations - Target head revision: 05f202836a5b
+2024-12-30 20:14:27.011 [INFO] app.db.migrations - Database needs upgrade, running migration...
+2024-12-30 20:15:32.004 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 20:15:32.004 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 20:15:32.004 [INFO] __main__ - Starting application initialization...
+2024-12-30 20:15:32.004 [INFO] app.core.runtime_config - Loaded runtime config from /Users/royzhu/Library/Application Support/electron/runtime-config.json
+2024-12-30 20:15:32.004 [INFO] __main__ - Runtime configuration initialized successfully
+2024-12-30 20:15:32.004 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 20:15:32.004 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 20:15:32.008 [INFO] __main__ - Electron: Starting backend server on port 8486...
+2024-12-30 20:15:32.009 [DEBUG] asyncio - Using selector: KqueueSelector
+2024-12-30 20:15:32.017 [INFO] app.db.session - Database directory: /Users/royzhu/Library/Application Support/electron
+2024-12-30 20:15:32.017 [INFO] app.db.migrations - Looking for alembic.ini at: /Users/royzhu/software/codes/BeaverDen/backend/alembic.ini
+2024-12-30 20:15:32.017 [INFO] app.db.migrations - Starting database migration check...
+2024-12-30 20:15:32.022 [INFO] alembic.runtime.migration - Context impl SQLiteImpl.
+2024-12-30 20:15:32.022 [INFO] alembic.runtime.migration - Will assume non-transactional DDL.
+2024-12-30 20:15:32.022 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 20:15:32.022 [INFO] sqlalchemy.engine.Engine - PRAGMA main.table_info("alembic_version")
+2024-12-30 20:15:32.022 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 20:15:32.025 [INFO] sqlalchemy.engine.Engine - SELECT alembic_version.version_num 
+FROM alembic_version
+2024-12-30 20:15:32.025 [INFO] sqlalchemy.engine.Engine - [generated in 0.00015s] ()
+2024-12-30 20:15:32.025 [INFO] sqlalchemy.engine.Engine - ROLLBACK
+2024-12-30 20:15:32.025 [INFO] app.db.migrations - Current database revision: 05f202836a5b
+2024-12-30 20:15:32.025 [INFO] app.db.migrations - Target head revision: 05f202836a5b
+2024-12-30 20:15:32.025 [INFO] app.db.migrations - Database is already at the latest revision - no upgrade needed
+2024-12-30 20:15:32.025 [INFO] app.db.migrations - Database check completed successfully
+2024-12-30 20:15:32.080 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 20:15:32.081 [INFO] sqlalchemy.engine.Engine - SELECT 1
+2024-12-30 20:15:32.081 [INFO] sqlalchemy.engine.Engine - [generated in 0.00009s] ()
+2024-12-30 20:15:32.081 [INFO] app.db.session - db_connected: True
+2024-12-30 20:15:32.081 [INFO] sqlalchemy.engine.Engine - SELECT name FROM sqlite_master WHERE type='table' AND name='user'
+2024-12-30 20:15:32.081 [INFO] sqlalchemy.engine.Engine - [generated in 0.00006s] ()
+2024-12-30 20:15:32.081 [INFO] app.db.session - db_initialized: True
+2024-12-30 20:15:32.081 [INFO] sqlalchemy.engine.Engine - SELECT version_num FROM alembic_version
+2024-12-30 20:15:32.081 [INFO] sqlalchemy.engine.Engine - [generated in 0.00006s] ()
+2024-12-30 20:15:32.081 [INFO] app.db.session - Database version: 05f202836a5b
+2024-12-30 20:15:32.082 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 20:33:34.223 [ERROR] app.api.v1.endpoints.auth - User registration failed: Mapper 'Mapper[UserSession(user_session)]' has no property 'user'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+2024-12-30 20:43:10.598 [INFO] __main__ - 接收到终止信号，正在清理资源...
+2024-12-30 20:43:10.598 [ERROR] __main__ - 关闭数据库连接时发生错误: 'State' object has no attribute 'engine'
+2024-12-30 20:43:13.058 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 20:43:13.058 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 20:43:13.058 [INFO] __main__ - Starting application initialization...
+2024-12-30 20:43:13.058 [INFO] app.core.runtime_config - Loaded runtime config from /Users/royzhu/Library/Application Support/electron/runtime-config.json
+2024-12-30 20:43:13.058 [INFO] __main__ - Runtime configuration initialized successfully
+2024-12-30 20:43:13.059 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 20:43:13.059 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 20:43:13.062 [INFO] __main__ - Electron: Starting backend server on port 8486...
+2024-12-30 20:43:13.063 [DEBUG] asyncio - Using selector: KqueueSelector
+2024-12-30 20:43:13.071 [INFO] app.db.session - Database directory: /Users/royzhu/Library/Application Support/electron
+2024-12-30 20:43:13.071 [INFO] app.db.migrations - Looking for alembic.ini at: /Users/royzhu/software/codes/BeaverDen/backend/alembic.ini
+2024-12-30 20:43:13.072 [INFO] app.db.migrations - Starting database migration check...
+2024-12-30 20:43:13.073 [INFO] alembic.runtime.migration - Context impl SQLiteImpl.
+2024-12-30 20:43:13.073 [INFO] alembic.runtime.migration - Will assume non-transactional DDL.
+2024-12-30 20:43:13.073 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 20:43:13.074 [INFO] sqlalchemy.engine.Engine - PRAGMA main.table_info("alembic_version")
+2024-12-30 20:43:13.074 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 20:43:13.074 [INFO] sqlalchemy.engine.Engine - SELECT alembic_version.version_num 
+FROM alembic_version
+2024-12-30 20:43:13.075 [INFO] sqlalchemy.engine.Engine - [generated in 0.00009s] ()
+2024-12-30 20:43:13.075 [INFO] sqlalchemy.engine.Engine - ROLLBACK
+2024-12-30 20:43:13.075 [INFO] app.db.migrations - Current database revision: 05f202836a5b
+2024-12-30 20:43:13.075 [INFO] app.db.migrations - Target head revision: 05f202836a5b
+2024-12-30 20:43:13.075 [INFO] app.db.migrations - Database is already at the latest revision - no upgrade needed
+2024-12-30 20:43:13.075 [INFO] app.db.migrations - Database check completed successfully
+2024-12-30 20:43:13.123 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 20:43:13.123 [INFO] sqlalchemy.engine.Engine - SELECT 1
+2024-12-30 20:43:13.123 [INFO] sqlalchemy.engine.Engine - [generated in 0.00008s] ()
+2024-12-30 20:43:13.123 [INFO] app.db.session - db_connected: True
+2024-12-30 20:43:13.123 [INFO] sqlalchemy.engine.Engine - SELECT name FROM sqlite_master WHERE type='table' AND name='user'
+2024-12-30 20:43:13.123 [INFO] sqlalchemy.engine.Engine - [generated in 0.00007s] ()
+2024-12-30 20:43:13.123 [INFO] app.db.session - db_initialized: True
+2024-12-30 20:43:13.123 [INFO] sqlalchemy.engine.Engine - SELECT version_num FROM alembic_version
+2024-12-30 20:43:13.123 [INFO] sqlalchemy.engine.Engine - [generated in 0.00006s] ()
+2024-12-30 20:43:13.123 [INFO] app.db.session - Database version: 05f202836a5b
+2024-12-30 20:43:13.124 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 20:43:43.854 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 20:43:43.856 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 20:43:43.856 [INFO] sqlalchemy.engine.Engine - [generated in 0.00018s] ('royteso', 1, 0)
+2024-12-30 20:43:43.857 [INFO] app.services.auth_service - Creating user object with username=royteso, email=roys@t.com,password=royzhu1225
+2024-12-30 20:43:44.026 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 20:43:44.026 [INFO] sqlalchemy.engine.Engine - [generated in 0.00022s] ('royteso', '$5$rounds=535000$BIy6mUJz66df.ZJb$nTva9wlFKVm9HFo8Wf0h9Ni/lU1C2dgT58mwALAHnz7', None, 'roys@t.com', None, 'ACTIVE', None, 'a23da4c3-cfec-4ba0-9879-9daa06815cc4', '2024-12-31 01:43:44.026078', '2024-12-31 01:43:44.026082')
+2024-12-30 20:43:44.027 [INFO] app.services.auth_service - start create user settings
+2024-12-30 20:43:44.027 [INFO] app.services.auth_service - end create user session
+2024-12-30 20:43:44.028 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 20:43:44.028 [INFO] sqlalchemy.engine.Engine - [generated in 0.00013s] ('a23da4c3-cfec-4ba0-9879-9daa06815cc4', 'EN', 'CAD', 'SUNSET', 7, 0, 1, 'fdb0fd0c-8043-4848-84c8-a817c6aef77b', '2024-12-31 01:43:44.028189', '2024-12-31 01:43:44.028190')
+2024-12-30 20:43:44.028 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 20:43:44.028 [INFO] sqlalchemy.engine.Engine - [generated in 0.00012s] ('a23da4c3-cfec-4ba0-9879-9daa06815cc4', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhMjNkYTRjMy1jZmVjLTRiYTAtOTg3OS05ZGFhMDY4MTVjYzQiLCJpYXQiOjE3MzU2MDk0MjQsImV4cCI6MTczNjIxNDIyNCwidHlwZSI6ImFjY2VzcyJ9.zZ7hpOXNci7Ir7-3k-T5kpf6PCOz6psroPNstxFLzO4', '2025-01-07 01:43:44.027541', '2024-12-31 01:43:44.027543', 1, '06ce19f5-aa4e-47af-b730-ee06c3f762c5', '2024-12-31 01:43:44.028802', '2024-12-31 01:43:44.028803')
+2024-12-30 20:43:44.029 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 20:43:44.030 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 20:43:44.031 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 20:43:44.031 [INFO] sqlalchemy.engine.Engine - [generated in 0.00010s] ('a23da4c3-cfec-4ba0-9879-9daa06815cc4',)
+2024-12-30 21:27:57.829 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:27:57.831 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 21:27:57.831 [INFO] sqlalchemy.engine.Engine - [cached since 2654s ago] ('roubos', 1, 0)
+2024-12-30 21:27:57.832 [INFO] app.services.auth_service - Creating user object with username=roubos, email=roybos@tom.com,password=royzhu1225
+2024-12-30 21:27:58.006 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:27:58.006 [INFO] sqlalchemy.engine.Engine - [cached since 2654s ago] ('roubos', '$5$rounds=535000$WUWCie1wCsUgLpDh$R89zNYV0Mom.mLSvV.LETj/.xHRaQYbAeYRnApds5G4', None, 'roybos@tom.com', None, 'ACTIVE', None, '557f9bb9-322f-4335-9e03-c1ff5ce98d37', '2024-12-31 02:27:58.006219', '2024-12-31 02:27:58.006221')
+2024-12-30 21:27:58.008 [INFO] app.services.auth_service - start create user settings
+2024-12-30 21:27:58.008 [INFO] app.services.auth_service - end create user session
+2024-12-30 21:27:58.008 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:27:58.008 [INFO] sqlalchemy.engine.Engine - [cached since 2654s ago] ('557f9bb9-322f-4335-9e03-c1ff5ce98d37', 'EN', 'CAD', 'SUNSET', 7, 0, 1, 'a2d25330-c51b-4c1a-9c66-2e1c998ae29e', '2024-12-31 02:27:58.008864', '2024-12-31 02:27:58.008865')
+2024-12-30 21:27:58.009 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:27:58.009 [INFO] sqlalchemy.engine.Engine - [cached since 2654s ago] ('557f9bb9-322f-4335-9e03-c1ff5ce98d37', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1NTdmOWJiOS0zMjJmLTQzMzUtOWUwMy1jMWZmNWNlOThkMzciLCJpYXQiOjE3MzU2MTIwNzgsImV4cCI6MTczNjIxNjg3OCwidHlwZSI6ImFjY2VzcyJ9.kJ9cVQtdXeHeFS4AkhedEMbFs4HUYABghjGbYzlPn5c', '2025-01-07 02:27:58.008630', '2024-12-31 02:27:58.008636', 1, '84bcd211-4b8a-4d1f-a0b2-13d19b0a889d', '2024-12-31 02:27:58.009162', '2024-12-31 02:27:58.009163')
+2024-12-30 21:27:58.009 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 21:27:58.010 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:27:58.010 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 21:27:58.010 [INFO] sqlalchemy.engine.Engine - [cached since 2654s ago] ('557f9bb9-322f-4335-9e03-c1ff5ce98d37',)
+2024-12-30 21:30:12.132 [INFO] __main__ - 接收到终止信号，正在清理资源...
+2024-12-30 21:30:12.133 [ERROR] __main__ - 关闭数据库连接时发生错误: 'State' object has no attribute 'engine'
+2024-12-30 21:30:14.623 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 21:30:14.623 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 21:30:14.623 [INFO] __main__ - Starting application initialization...
+2024-12-30 21:30:14.623 [INFO] app.core.runtime_config - Loaded runtime config from /Users/royzhu/Library/Application Support/electron/runtime-config.json
+2024-12-30 21:30:14.623 [INFO] __main__ - Runtime configuration initialized successfully
+2024-12-30 21:30:14.623 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 21:30:14.623 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 21:30:14.627 [INFO] __main__ - Electron: Starting backend server on port 8486...
+2024-12-30 21:30:14.628 [DEBUG] asyncio - Using selector: KqueueSelector
+2024-12-30 21:30:14.636 [INFO] app.db.session - Database directory: /Users/royzhu/Library/Application Support/electron
+2024-12-30 21:30:14.636 [INFO] app.db.migrations - Looking for alembic.ini at: /Users/royzhu/software/codes/BeaverDen/backend/alembic.ini
+2024-12-30 21:30:14.636 [INFO] app.db.migrations - Starting database migration check...
+2024-12-30 21:30:14.638 [INFO] alembic.runtime.migration - Context impl SQLiteImpl.
+2024-12-30 21:30:14.638 [INFO] alembic.runtime.migration - Will assume non-transactional DDL.
+2024-12-30 21:30:14.638 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:30:14.638 [INFO] sqlalchemy.engine.Engine - PRAGMA main.table_info("alembic_version")
+2024-12-30 21:30:14.638 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 21:30:14.639 [INFO] sqlalchemy.engine.Engine - SELECT alembic_version.version_num 
+FROM alembic_version
+2024-12-30 21:30:14.639 [INFO] sqlalchemy.engine.Engine - [generated in 0.00008s] ()
+2024-12-30 21:30:14.639 [INFO] sqlalchemy.engine.Engine - ROLLBACK
+2024-12-30 21:30:14.639 [INFO] app.db.migrations - Current database revision: 05f202836a5b
+2024-12-30 21:30:14.639 [INFO] app.db.migrations - Target head revision: 05f202836a5b
+2024-12-30 21:30:14.639 [INFO] app.db.migrations - Database is already at the latest revision - no upgrade needed
+2024-12-30 21:30:14.639 [INFO] app.db.migrations - Database check completed successfully
+2024-12-30 21:30:14.709 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:30:14.709 [INFO] sqlalchemy.engine.Engine - SELECT 1
+2024-12-30 21:30:14.709 [INFO] sqlalchemy.engine.Engine - [generated in 0.00009s] ()
+2024-12-30 21:30:14.709 [INFO] app.db.session - db_connected: True
+2024-12-30 21:30:14.710 [INFO] sqlalchemy.engine.Engine - SELECT name FROM sqlite_master WHERE type='table' AND name='user'
+2024-12-30 21:30:14.710 [INFO] sqlalchemy.engine.Engine - [generated in 0.00006s] ()
+2024-12-30 21:30:14.710 [INFO] app.db.session - db_initialized: True
+2024-12-30 21:30:14.710 [INFO] sqlalchemy.engine.Engine - SELECT version_num FROM alembic_version
+2024-12-30 21:30:14.710 [INFO] sqlalchemy.engine.Engine - [generated in 0.00007s] ()
+2024-12-30 21:30:14.710 [INFO] app.db.session - Database version: 05f202836a5b
+2024-12-30 21:30:14.710 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 21:30:38.472 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:30:38.475 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 21:30:38.475 [INFO] sqlalchemy.engine.Engine - [generated in 0.00022s] ('test001', 1, 0)
+2024-12-30 21:30:38.475 [INFO] app.services.auth_service - Creating user object with username=test001, email=test001@test.com,password=royzhu1225
+2024-12-30 21:30:38.654 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:30:38.654 [INFO] sqlalchemy.engine.Engine - [generated in 0.00026s] ('test001', '$5$rounds=535000$W5Wtb8SV293DGS8s$O6JKY4KsrRSNQjDHnY2CDx03wTm8sIMcxc9FAhFReu1', None, 'test001@test.com', None, 'ACTIVE', None, '2ab71af5-8df5-4f88-a69c-d5830b2eb497', '2024-12-31 02:30:38.653975', '2024-12-31 02:30:38.653982')
+2024-12-30 21:30:38.655 [INFO] app.services.auth_service - start create user settings
+2024-12-30 21:30:38.655 [INFO] app.services.auth_service - end create user session
+2024-12-30 21:30:38.656 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:30:38.656 [INFO] sqlalchemy.engine.Engine - [generated in 0.00016s] ('2ab71af5-8df5-4f88-a69c-d5830b2eb497', 'EN', 'CAD', 'SUNSET', 7, 0, 1, '60581cbc-5b14-4dea-a63b-a13e9626145c', '2024-12-31 02:30:38.656771', '2024-12-31 02:30:38.656772')
+2024-12-30 21:30:38.657 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:30:38.657 [INFO] sqlalchemy.engine.Engine - [generated in 0.00013s] ('2ab71af5-8df5-4f88-a69c-d5830b2eb497', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyYWI3MWFmNS04ZGY1LTRmODgtYTY5Yy1kNTgzMGIyZWI0OTciLCJpYXQiOjE3MzU2MTIyMzgsImV4cCI6MTczNjIxNzAzOCwidHlwZSI6ImFjY2VzcyJ9.CVOVTyC7qkXkdy_STT4XbplrASegJ02peFEUvw-ekEA', '2025-01-07 02:30:38.655940', '2024-12-31 02:30:38.655943', 1, 'cd299bfb-79ae-4dd5-93df-0ba6dbb31af1', '2024-12-31 02:30:38.657436', '2024-12-31 02:30:38.657436')
+2024-12-30 21:30:38.658 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 21:30:38.659 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:30:38.660 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 21:30:38.660 [INFO] sqlalchemy.engine.Engine - [generated in 0.00010s] ('2ab71af5-8df5-4f88-a69c-d5830b2eb497',)
+2024-12-30 21:35:06.910 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:35:06.911 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 21:35:06.911 [INFO] sqlalchemy.engine.Engine - [cached since 268.4s ago] ('test002', 1, 0)
+2024-12-30 21:35:06.913 [INFO] app.services.auth_service - Creating user object with username=test002, email=test002@test.com,password=royzhu1225
+2024-12-30 21:35:07.088 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:35:07.088 [INFO] sqlalchemy.engine.Engine - [cached since 268.4s ago] ('test002', '$5$rounds=535000$un7nMnIXqExMw4Bz$bJMYJwd//vp1.dh/k6pNpBnWPF5oLEkzyj5QOa2r4G/', None, 'test002@test.com', None, 'ACTIVE', None, '5a35fd97-2622-40ab-9557-102d223995c5', '2024-12-31 02:35:07.088600', '2024-12-31 02:35:07.088607')
+2024-12-30 21:35:07.090 [INFO] app.services.auth_service - start create user settings
+2024-12-30 21:35:07.090 [INFO] app.services.auth_service - end create user session
+2024-12-30 21:35:07.091 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:35:07.091 [INFO] sqlalchemy.engine.Engine - [cached since 268.4s ago] ('5a35fd97-2622-40ab-9557-102d223995c5', 'EN', 'CAD', 'SUNSET', 7, 0, 1, '5987bf00-03f0-43a2-9086-210998eafcdb', '2024-12-31 02:35:07.091153', '2024-12-31 02:35:07.091154')
+2024-12-30 21:35:07.091 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:35:07.091 [INFO] sqlalchemy.engine.Engine - [cached since 268.4s ago] ('5a35fd97-2622-40ab-9557-102d223995c5', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YTM1ZmQ5Ny0yNjIyLTQwYWItOTU1Ny0xMDJkMjIzOTk1YzUiLCJpYXQiOjE3MzU2MTI1MDcsImV4cCI6MTczNjIxNzMwNywidHlwZSI6ImFjY2VzcyJ9.at0wpeNXTAMqcpOTkW68jKQsIFRnuuZF0f7ZTWo1Kew', '2025-01-07 02:35:07.090890', '2024-12-31 02:35:07.090901', 1, 'fdb461a4-6f04-4bf5-a390-5b4b69f538fa', '2024-12-31 02:35:07.091484', '2024-12-31 02:35:07.091484')
+2024-12-30 21:35:07.091 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 21:35:07.092 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:35:07.092 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 21:35:07.092 [INFO] sqlalchemy.engine.Engine - [cached since 268.4s ago] ('5a35fd97-2622-40ab-9557-102d223995c5',)
+2024-12-30 21:42:09.382 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:42:09.384 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 21:42:09.384 [INFO] sqlalchemy.engine.Engine - [cached since 690.9s ago] ('test03', 1, 0)
+2024-12-30 21:42:09.386 [INFO] app.services.auth_service - Creating user object with username=test03, email=test03@test.com,password=royzhu1225
+2024-12-30 21:42:09.561 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:42:09.561 [INFO] sqlalchemy.engine.Engine - [cached since 690.9s ago] ('test03', '$5$rounds=535000$l7bbOxjYfKbpc4uA$EFB50HtwO2YsJXKwX/oFTtaz.jC/pkQ7KLsOTAROqU6', None, 'test03@test.com', None, 'ACTIVE', None, 'cb2a1b53-89c7-4982-9834-64fa906f7832', '2024-12-31 02:42:09.561180', '2024-12-31 02:42:09.561184')
+2024-12-30 21:42:09.563 [INFO] app.services.auth_service - start create user settings
+2024-12-30 21:42:09.563 [INFO] app.services.auth_service - end create user session
+2024-12-30 21:42:09.563 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:42:09.563 [INFO] sqlalchemy.engine.Engine - [cached since 690.9s ago] ('cb2a1b53-89c7-4982-9834-64fa906f7832', 'EN', 'CAD', 'SUNSET', 7, 0, 1, '82563bf0-5dbd-4967-a814-0b09042648aa', '2024-12-31 02:42:09.563816', '2024-12-31 02:42:09.563817')
+2024-12-30 21:42:09.564 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:42:09.564 [INFO] sqlalchemy.engine.Engine - [cached since 690.9s ago] ('cb2a1b53-89c7-4982-9834-64fa906f7832', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjYjJhMWI1My04OWM3LTQ5ODItOTgzNC02NGZhOTA2Zjc4MzIiLCJpYXQiOjE3MzU2MTI5MjksImV4cCI6MTczNjIxNzcyOSwidHlwZSI6ImFjY2VzcyJ9.se69KJbQOBFGnRyFRSkgpP8-YdQhDjumvSJdcA_UJwc', '2025-01-07 02:42:09.563567', '2024-12-31 02:42:09.563574', 1, 'fb7cce10-f98a-49b6-adbd-0e35f05964a3', '2024-12-31 02:42:09.564130', '2024-12-31 02:42:09.564131')
+2024-12-30 21:42:09.564 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 21:42:09.565 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:42:09.565 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 21:42:09.565 [INFO] sqlalchemy.engine.Engine - [cached since 690.9s ago] ('cb2a1b53-89c7-4982-9834-64fa906f7832',)
+2024-12-30 21:52:00.027 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:52:00.029 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 21:52:00.029 [INFO] sqlalchemy.engine.Engine - [cached since 1282s ago] ('test04', 1, 0)
+2024-12-30 21:52:00.031 [INFO] app.services.auth_service - Creating user object with username=test04, email=test04@test.com,password=royzhu1225
+2024-12-30 21:52:00.207 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:52:00.207 [INFO] sqlalchemy.engine.Engine - [cached since 1282s ago] ('test04', '$5$rounds=535000$hRNF/aGPEezQ/AXz$ra/FKXlP4AvZ29ijpzjYcTc8YgbZlpbBVyYWstBW2OC', None, 'test04@test.com', None, 'ACTIVE', None, '9537ce11-e924-4bef-849b-1a00a8708e19', '2024-12-31 02:52:00.207617', '2024-12-31 02:52:00.207620')
+2024-12-30 21:52:00.208 [INFO] app.services.auth_service - start create user settings
+2024-12-30 21:52:00.209 [INFO] app.services.auth_service - end create user session
+2024-12-30 21:52:00.209 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:52:00.209 [INFO] sqlalchemy.engine.Engine - [cached since 1282s ago] ('9537ce11-e924-4bef-849b-1a00a8708e19', 'EN', 'CAD', 'NATURAL', 7, 0, 1, '17670c88-520c-4f7b-a4b0-9c153a33d67e', '2024-12-31 02:52:00.209523', '2024-12-31 02:52:00.209524')
+2024-12-30 21:52:00.209 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 21:52:00.209 [INFO] sqlalchemy.engine.Engine - [cached since 1282s ago] ('9537ce11-e924-4bef-849b-1a00a8708e19', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5NTM3Y2UxMS1lOTI0LTRiZWYtODQ5Yi0xYTAwYTg3MDhlMTkiLCJpYXQiOjE3MzU2MTM1MjAsImV4cCI6MTczNjIxODMyMCwidHlwZSI6ImFjY2VzcyJ9.OG9wYEGtOBRuRs0JJMNyrVhDy-UxmE5u9JLUmDyEY1M', '2025-01-07 02:52:00.209237', '2024-12-31 02:52:00.209243', 1, '354db4ad-c58a-4a2a-8541-f7bb7f4eca87', '2024-12-31 02:52:00.209830', '2024-12-31 02:52:00.209830')
+2024-12-30 21:52:00.210 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 21:52:00.211 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 21:52:00.211 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 21:52:00.211 [INFO] sqlalchemy.engine.Engine - [cached since 1282s ago] ('9537ce11-e924-4bef-849b-1a00a8708e19',)
+2024-12-30 22:11:38.759 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 22:11:38.761 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 22:11:38.761 [INFO] sqlalchemy.engine.Engine - [cached since 2460s ago] ('test05', 1, 0)
+2024-12-30 22:11:38.762 [INFO] app.services.auth_service - Creating user object with username=test05, email=test05@test.com,password=royzhu1225
+2024-12-30 22:11:38.935 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:11:38.936 [INFO] sqlalchemy.engine.Engine - [cached since 2460s ago] ('test05', '$5$rounds=535000$yVtAbemBbI/aTxg.$1k7s9Vw2PU1cb7y9roWbwECkOvxQOiKWh.7plL3ZWM8', None, 'test05@test.com', None, 'ACTIVE', None, '192af822-0ce6-460f-b0f8-96035a9371e0', '2024-12-31 03:11:38.935934', '2024-12-31 03:11:38.935938')
+2024-12-30 22:11:38.937 [INFO] app.services.auth_service - start create user settings
+2024-12-30 22:11:38.937 [INFO] app.services.auth_service - end create user session
+2024-12-30 22:11:38.938 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:11:38.938 [INFO] sqlalchemy.engine.Engine - [cached since 2460s ago] ('192af822-0ce6-460f-b0f8-96035a9371e0', 'EN', 'CAD', 'SUNSET', 7, 0, 1, 'b38c4b0b-5854-492c-a227-01fcedf4618d', '2024-12-31 03:11:38.937980', '2024-12-31 03:11:38.937981')
+2024-12-30 22:11:38.938 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:11:38.938 [INFO] sqlalchemy.engine.Engine - [cached since 2460s ago] ('192af822-0ce6-460f-b0f8-96035a9371e0', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxOTJhZjgyMi0wY2U2LTQ2MGYtYjBmOC05NjAzNWE5MzcxZTAiLCJpYXQiOjE3MzU2MTQ2OTgsImV4cCI6MTczNjIxOTQ5OCwidHlwZSI6ImFjY2VzcyJ9.dZi8IE17DT81nesAsDQkN467y_woweatyhGHzU-AzOg', '2025-01-07 03:11:38.937695', '2024-12-31 03:11:38.937705', 1, 'ca35a08e-619a-4e70-be90-b30df778248e', '2024-12-31 03:11:38.938322', '2024-12-31 03:11:38.938323')
+2024-12-30 22:11:38.938 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 22:11:38.939 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 22:11:38.940 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 22:11:38.940 [INFO] sqlalchemy.engine.Engine - [cached since 2460s ago] ('192af822-0ce6-460f-b0f8-96035a9371e0',)
+2024-12-30 22:35:12.334 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 22:35:12.336 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 22:35:12.336 [INFO] sqlalchemy.engine.Engine - [cached since 3874s ago] ('test06', 1, 0)
+2024-12-30 22:35:12.338 [INFO] app.services.auth_service - Creating user object with username=test06, email=test06@test.com,password=royzhu1225
+2024-12-30 22:35:12.511 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:35:12.511 [INFO] sqlalchemy.engine.Engine - [cached since 3874s ago] ('test06', '$5$rounds=535000$zTn8ah6M46PJ5dUt$RE4K3hoQrFFaEYNpkhta73a3igWRE3Xza4f4nGMz/h.', None, 'test06@test.com', None, 'ACTIVE', None, 'ed631125-1183-4e57-85f0-e9819d853fe4', '2024-12-31 03:35:12.511329', '2024-12-31 03:35:12.511332')
+2024-12-30 22:35:12.512 [INFO] app.services.auth_service - start create user settings
+2024-12-30 22:35:12.513 [INFO] app.services.auth_service - end create user session
+2024-12-30 22:35:12.513 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:35:12.513 [INFO] sqlalchemy.engine.Engine - [cached since 3874s ago] ('ed631125-1183-4e57-85f0-e9819d853fe4', 'EN', 'CAD', 'SUNSET', 7, 0, 1, '2ac7aa0d-f9aa-4b93-b93a-774aecd9107e', '2024-12-31 03:35:12.513616', '2024-12-31 03:35:12.513617')
+2024-12-30 22:35:12.513 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:35:12.514 [INFO] sqlalchemy.engine.Engine - [cached since 3874s ago] ('ed631125-1183-4e57-85f0-e9819d853fe4', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlZDYzMTEyNS0xMTgzLTRlNTctODVmMC1lOTgxOWQ4NTNmZTQiLCJpYXQiOjE3MzU2MTYxMTIsImV4cCI6MTczNjIyMDkxMiwidHlwZSI6ImFjY2VzcyJ9.3ygsAF9AxCBURbtrsrApwvQvYEeUCVVrz0kjQWcQxNE', '2025-01-07 03:35:12.513341', '2024-12-31 03:35:12.513347', 1, 'e6e8c448-796c-4628-b6a6-9edad85fb311', '2024-12-31 03:35:12.513959', '2024-12-31 03:35:12.513960')
+2024-12-30 22:35:12.514 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 22:35:12.515 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 22:35:12.515 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 22:35:12.515 [INFO] sqlalchemy.engine.Engine - [cached since 3874s ago] ('ed631125-1183-4e57-85f0-e9819d853fe4',)
+2024-12-30 22:37:42.440 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 22:37:42.440 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 22:37:42.441 [INFO] sqlalchemy.engine.Engine - [cached since 4024s ago] ('test08', 1, 0)
+2024-12-30 22:37:42.441 [INFO] app.services.auth_service - Creating user object with username=test08, email=test08@test.com,password=royzhu1225
+2024-12-30 22:37:42.618 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:37:42.618 [INFO] sqlalchemy.engine.Engine - [cached since 4024s ago] ('test08', '$5$rounds=535000$H/jfitCGHf7Jhgm/$N0cw.3j.TGbVHTNHSHBG9t313zAGMGKMGD/DSCDooy6', None, 'test08@test.com', None, 'ACTIVE', None, '18b4c768-4ae8-4993-bb58-787391b53339', '2024-12-31 03:37:42.618591', '2024-12-31 03:37:42.618594')
+2024-12-30 22:37:42.620 [INFO] app.services.auth_service - start create user settings
+2024-12-30 22:37:42.620 [INFO] app.services.auth_service - end create user session
+2024-12-30 22:37:42.620 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:37:42.620 [INFO] sqlalchemy.engine.Engine - [cached since 4024s ago] ('18b4c768-4ae8-4993-bb58-787391b53339', 'EN', 'CAD', 'SUNSET', 7, 0, 1, 'c82845f7-33e2-4ea2-ad1c-50cd497ec868', '2024-12-31 03:37:42.620573', '2024-12-31 03:37:42.620574')
+2024-12-30 22:37:42.620 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:37:42.620 [INFO] sqlalchemy.engine.Engine - [cached since 4024s ago] ('18b4c768-4ae8-4993-bb58-787391b53339', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxOGI0Yzc2OC00YWU4LTQ5OTMtYmI1OC03ODczOTFiNTMzMzkiLCJpYXQiOjE3MzU2MTYyNjIsImV4cCI6MTczNjIyMTA2MiwidHlwZSI6ImFjY2VzcyJ9.7uyUQD5c620sOJG5WdO8N4oaoXV-ojEFUnzVDDkVDOc', '2025-01-07 03:37:42.620327', '2024-12-31 03:37:42.620329', 1, 'aa3a9ecf-9fec-401c-95d8-53acf4b5a6ef', '2024-12-31 03:37:42.620832', '2024-12-31 03:37:42.620833')
+2024-12-30 22:37:42.622 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 22:37:42.623 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 22:37:42.623 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 22:37:42.623 [INFO] sqlalchemy.engine.Engine - [cached since 4024s ago] ('18b4c768-4ae8-4993-bb58-787391b53339',)
+2024-12-30 22:47:24.497 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 22:47:24.498 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 22:47:24.498 [INFO] sqlalchemy.engine.Engine - [cached since 4606s ago] ('test09', 1, 0)
+2024-12-30 22:47:24.499 [INFO] app.services.auth_service - Creating user object with username=test09, email=test09@test.com,password=royzhu1225
+2024-12-30 22:47:24.675 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:47:24.675 [INFO] sqlalchemy.engine.Engine - [cached since 4606s ago] ('test09', '$5$rounds=535000$EN.FVBYjaN/VMQpt$Q461SEip9P.MIIHMGvWZZo5cuh7FtwIIhr46oX5xBqC', None, 'test09@test.com', None, 'ACTIVE', None, '8c42401c-93ca-4a3c-9f03-8d67e8766c3a', '2024-12-31 03:47:24.674944', '2024-12-31 03:47:24.674947')
+2024-12-30 22:47:24.676 [INFO] app.services.auth_service - start create user settings
+2024-12-30 22:47:24.677 [INFO] app.services.auth_service - end create user session
+2024-12-30 22:47:24.677 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:47:24.677 [INFO] sqlalchemy.engine.Engine - [cached since 4606s ago] ('8c42401c-93ca-4a3c-9f03-8d67e8766c3a', 'EN', 'CAD', 'SUNSET', 7, 0, 1, '9bc7bfa7-4e4c-421a-a2da-a01d139f9b8a', '2024-12-31 03:47:24.677361', '2024-12-31 03:47:24.677361')
+2024-12-30 22:47:24.677 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:47:24.677 [INFO] sqlalchemy.engine.Engine - [cached since 4606s ago] ('8c42401c-93ca-4a3c-9f03-8d67e8766c3a', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4YzQyNDAxYy05M2NhLTRhM2MtOWYwMy04ZDY3ZTg3NjZjM2EiLCJpYXQiOjE3MzU2MTY4NDQsImV4cCI6MTczNjIyMTY0NCwidHlwZSI6ImFjY2VzcyJ9.RJ9HHRheHe5e8kpxUuuA5oV-GzQY7LG5l1oqyhqasp8', '2025-01-07 03:47:24.677092', '2024-12-31 03:47:24.677099', 1, 'a324b169-4c02-46ee-946f-3ba746185329', '2024-12-31 03:47:24.677663', '2024-12-31 03:47:24.677664')
+2024-12-30 22:47:24.678 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 22:47:24.679 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 22:47:24.679 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 22:47:24.679 [INFO] sqlalchemy.engine.Engine - [cached since 4606s ago] ('8c42401c-93ca-4a3c-9f03-8d67e8766c3a',)
+2024-12-30 22:53:16.648 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 22:53:16.650 [INFO] sqlalchemy.engine.Engine - SELECT user.username AS user_username, user.password_hash AS user_password_hash, user.nickname AS user_nickname, user.email AS user_email, user.avatar_path AS user_avatar_path, user.account_status AS user_account_status, user.last_login_at AS user_last_login_at, user.id AS user_id, user.created_at AS user_created_at, user.updated_at AS user_updated_at 
+FROM user 
+WHERE user.username = ?
+ LIMIT ? OFFSET ?
+2024-12-30 22:53:16.650 [INFO] sqlalchemy.engine.Engine - [cached since 4958s ago] ('test10', 1, 0)
+2024-12-30 22:53:16.651 [INFO] app.services.auth_service - Creating user object with username=test10, email=test10@test.com,password=royzhu1225
+2024-12-30 22:53:16.829 [INFO] sqlalchemy.engine.Engine - INSERT INTO user (username, password_hash, nickname, email, avatar_path, account_status, last_login_at, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:53:16.829 [INFO] sqlalchemy.engine.Engine - [cached since 4958s ago] ('test10', '$5$rounds=535000$hK2olWSzLlhz2mlS$zdySXOLEBO/v1cmXx4bKbDZ72GQKMXNzS73.x3KHQw.', None, 'test10@test.com', None, 'ACTIVE', None, 'e4576554-f5c1-4a1d-8d0c-394715739943', '2024-12-31 03:53:16.828999', '2024-12-31 03:53:16.829002')
+2024-12-30 22:53:16.830 [INFO] app.services.auth_service - start create user settings
+2024-12-30 22:53:16.830 [INFO] app.services.auth_service - end create user session
+2024-12-30 22:53:16.831 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_preferences (user_id, language, currency, theme, login_expire_days, require_password_on_launch, notification_enabled, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:53:16.831 [INFO] sqlalchemy.engine.Engine - [cached since 4958s ago] ('e4576554-f5c1-4a1d-8d0c-394715739943', 'EN', 'CAD', 'SUNSET', 7, 0, 1, '45f69d94-fbab-4f54-8b0d-424c5feebc7f', '2024-12-31 03:53:16.831198', '2024-12-31 03:53:16.831198')
+2024-12-30 22:53:16.831 [INFO] sqlalchemy.engine.Engine - INSERT INTO user_session (user_id, device_id, device_name, device_type, os, model, manufacturer, ip, token, token_expires_at, last_active_at, is_active, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2024-12-30 22:53:16.831 [INFO] sqlalchemy.engine.Engine - [cached since 4958s ago] ('e4576554-f5c1-4a1d-8d0c-394715739943', 'dev-device', 'Development Machine', 'Desktop', 'Development OS', '2024 Model', 'Apple', '127.0.0.1', b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlNDU3NjU1NC1mNWMxLTRhMWQtOGQwYy0zOTQ3MTU3Mzk5NDMiLCJpYXQiOjE3MzU2MTcxOTYsImV4cCI6MTczNjIyMTk5NiwidHlwZSI6ImFjY2VzcyJ9.btaSOn0hxn2Ubh4M1XZfyEHx1Ud9VJ9Bb6xObcum64E', '2025-01-07 03:53:16.830948', '2024-12-31 03:53:16.830954', 1, '432cd1b8-0e74-4d01-8247-7878f573421d', '2024-12-31 03:53:16.831485', '2024-12-31 03:53:16.831485')
+2024-12-30 22:53:16.832 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-30 22:53:16.832 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 22:53:16.832 [INFO] sqlalchemy.engine.Engine - SELECT user_settings.user_id AS user_settings_user_id, user_settings.is_two_factor_enabled AS user_settings_is_two_factor_enabled, user_settings.security_question_set AS user_settings_security_question_set, user_settings.email_notifications_enabled AS user_settings_email_notifications_enabled, user_settings.account_locked AS user_settings_account_locked, user_settings.last_password_reset_at AS user_settings_last_password_reset_at, user_settings.id AS user_settings_id, user_settings.created_at AS user_settings_created_at, user_settings.updated_at AS user_settings_updated_at 
+FROM user_settings 
+WHERE ? = user_settings.user_id
+2024-12-30 22:53:16.833 [INFO] sqlalchemy.engine.Engine - [cached since 4958s ago] ('e4576554-f5c1-4a1d-8d0c-394715739943',)
+2024-12-30 23:58:46.922 [INFO] __main__ - 接收到终止信号，正在清理资源...
+2024-12-30 23:58:46.922 [ERROR] __main__ - 关闭数据库连接时发生错误: 'State' object has no attribute 'engine'
+2024-12-30 23:58:49.814 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 23:58:49.814 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 23:58:49.814 [INFO] __main__ - Starting application initialization...
+2024-12-30 23:58:49.814 [INFO] app.core.runtime_config - Loaded runtime config from /Users/royzhu/Library/Application Support/electron/runtime-config.json
+2024-12-30 23:58:49.814 [INFO] __main__ - Runtime configuration initialized successfully
+2024-12-30 23:58:49.814 [INFO] __main__ - Logger initialized in development mode
+2024-12-30 23:58:49.814 [INFO] __main__ - Log file location: /Users/royzhu/software/codes/BeaverDen/backend/logs/beaveden_development.log
+2024-12-30 23:58:49.818 [INFO] __main__ - Electron: Starting backend server on port 8486...
+2024-12-30 23:58:49.819 [DEBUG] asyncio - Using selector: KqueueSelector
+2024-12-30 23:58:49.827 [INFO] app.db.session - Database directory: /Users/royzhu/Library/Application Support/electron
+2024-12-30 23:58:49.827 [INFO] app.db.migrations - Looking for alembic.ini at: /Users/royzhu/software/codes/BeaverDen/backend/alembic.ini
+2024-12-30 23:58:49.828 [INFO] app.db.migrations - Starting database migration check...
+2024-12-30 23:58:49.829 [INFO] alembic.runtime.migration - Context impl SQLiteImpl.
+2024-12-30 23:58:49.829 [INFO] alembic.runtime.migration - Will assume non-transactional DDL.
+2024-12-30 23:58:49.829 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 23:58:49.829 [INFO] sqlalchemy.engine.Engine - PRAGMA main.table_info("alembic_version")
+2024-12-30 23:58:49.829 [INFO] sqlalchemy.engine.Engine - [raw sql] ()
+2024-12-30 23:58:49.830 [INFO] sqlalchemy.engine.Engine - SELECT alembic_version.version_num 
+FROM alembic_version
+2024-12-30 23:58:49.831 [INFO] sqlalchemy.engine.Engine - [generated in 0.00014s] ()
+2024-12-30 23:58:49.831 [INFO] sqlalchemy.engine.Engine - ROLLBACK
+2024-12-30 23:58:49.831 [INFO] app.db.migrations - Current database revision: 05f202836a5b
+2024-12-30 23:58:49.831 [INFO] app.db.migrations - Target head revision: 05f202836a5b
+2024-12-30 23:58:49.831 [INFO] app.db.migrations - Database is already at the latest revision - no upgrade needed
+2024-12-30 23:58:49.831 [INFO] app.db.migrations - Database check completed successfully
+2024-12-30 23:58:49.866 [INFO] sqlalchemy.engine.Engine - BEGIN (implicit)
+2024-12-30 23:58:49.867 [INFO] sqlalchemy.engine.Engine - SELECT 1
+2024-12-30 23:58:49.867 [INFO] sqlalchemy.engine.Engine - [generated in 0.00012s] ()
+2024-12-30 23:58:49.867 [INFO] app.db.session - db_connected: True
+2024-12-30 23:58:49.867 [INFO] sqlalchemy.engine.Engine - SELECT name FROM sqlite_master WHERE type='table' AND name='user'
+2024-12-30 23:58:49.867 [INFO] sqlalchemy.engine.Engine - [generated in 0.00008s] ()
+2024-12-30 23:58:49.867 [INFO] app.db.session - db_initialized: True
+2024-12-30 23:58:49.867 [INFO] sqlalchemy.engine.Engine - SELECT version_num FROM alembic_version
+2024-12-30 23:58:49.867 [INFO] sqlalchemy.engine.Engine - [generated in 0.00006s] ()
+2024-12-30 23:58:49.868 [INFO] app.db.session - Database version: 05f202836a5b
+2024-12-30 23:58:49.868 [INFO] sqlalchemy.engine.Engine - COMMIT
+2024-12-31 00:24:49.194 [INFO] __main__ - 接收到终止信号，正在清理资源...
+2024-12-31 00:24:49.195 [ERROR] __main__ - 关闭数据库连接时发生错误: 'State' object has no attribute 'engine'

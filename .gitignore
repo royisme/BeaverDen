@@ -38,8 +38,7 @@ node_modules
 
 # debug
 .vscode/
-backend/logs/
+backend/logs/*.log
 backend/.pytest_cache/
 frontend/logs/
-backend/logs/beaveden_development.log
-backend/logs/beaveden_production.log
+
