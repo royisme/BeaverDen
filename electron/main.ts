@@ -63,11 +63,11 @@ class MainProcess {
 
       // 捕获后端进程的标准输出和错误输出
       this.pythonProcess.stdout.on('data', (data: Buffer) => {
-        console.log(`Backend: ${data.toString()}`);
+        console.log(`Backend OUTPUT: ${data.toString()}`);
       });
 
       this.pythonProcess.stderr.on('data', (data: Buffer) => {
-        console.error(`Backend Error: ${data.toString()}`);
+        console.error(`Backend OUTPUT: ${data.toString()}`);
       });
 
       // 处理后端进程的退出事件
@@ -140,7 +140,7 @@ class MainProcess {
         webSecurity: true
       },
       // 添加 macOS 特定配置
-      titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
+      // titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
       trafficLightPosition: { x: 10, y: 10 },
       frame: true,
     });

@@ -20,7 +20,8 @@ export function AppRoutes() {
 
       {/* 应用路由 - 包含在 AppContent 中，自带 SidebarProvider */}
       <Route path="/app" element={<AppContent />}>
-        <Route index element={<DashboardPage />} />
+        <Route index path="/app/dashboard" element={<DashboardPage />} />
+
         {/* 其他需要侧边栏的路由 */}
       </Route>
 

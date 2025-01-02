@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react'
 import { AppInitializer } from '@/components/shared/app-initializer'
 
 export default function App() {
+  
   return (
     <HashRouter>
         <Suspense fallback={

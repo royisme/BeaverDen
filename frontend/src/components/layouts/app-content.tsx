@@ -8,21 +8,17 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 export default function AppContent() {
   return (
     <SidebarProvider>
-
-    <div className="flex min-h-screen">
       <AppSidebar 
         menuGroups={menuGroups}
         user={mockUser}
       />
-      <SidebarInset className="flex-1 flex flex-col">
+      <SidebarInset>
         <Header title="Good morning, Alex" subtitle="Welcome back" />
-        <div className="flex-1 p-6">
-          <div className="bg-card rounded-lg p-6">
+        <div className="flex flex-1 flex-col gap-4 p-4">
+
             <Outlet />
           </div>
-          </div>
         </SidebarInset>
-      </div>
     </SidebarProvider>
   )
 }

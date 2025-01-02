@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 from app.core.auth_jwt import AuthJWT
 import logging
-from app.models.user import User,UserSettings,UserSession,User
+from app.models.user import User,UserPreferences,UserSession
 from app.models.enums import AccountStatus
 from app.api.v1.endpoints.api_models import RegisterRequest,LoginRequest
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ class AuthService:
             self.session.flush()
             logger.info("start create user settings")
             # 创建用户设置
-            settings = UserSettings(
+            preferences = UserPreferences(
                 user_id=user.id,
                 **user_data.preferences.dict()
             )
@@ -58,7 +58,7 @@ class AuthService:
             logger.info("end create user session")
 
             
-            self.session.add(settings)
+            self.session.add(preferences)
             self.session.add(user_session)
             self.session.commit()
             

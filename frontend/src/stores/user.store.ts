@@ -1,11 +1,12 @@
+// src/stores/user.store.ts
 import { create } from 'zustand';
 import { localDb } from '@/lib/local-db';
 import { getApiClient } from '@/lib/api-client';
 import { useSessionStore } from '@/stores/session.store';
-import { User, UserPreferences } from '@/types/user';
+import { LocalUser, UserPreferences } from '@/types/user';
 
 interface UserState {
-  currentUser: User | null;
+  currentUser: LocalUser | null;
   isLoading: boolean;
   error: string | null;
 
@@ -18,90 +19,124 @@ interface UserState {
   
   loginUser: (username: string, password: string) => Promise<void>;
   logoutUser: () => Promise<void>;
+  loadLocalUser: () => Promise<LocalUser | null>;
   updatePreferences: (preferences: Partial<UserPreferences>) => Promise<void>;
-  syncUserData: () => Promise<void>;
-  loadUserData: () => Promise<void>;
+
+  registrationState: {
+    status: 'idle' | 'registering' | 'success' | 'error';
+    error?: string;
+  };
+
 }
 
-export const useUserStore = create<UserState>((set, get) => ({
+export const useUserStore = create<UserState>((set  , get) => ({
   currentUser: null,
   isLoading: false,
   error: null,
 
-  registerUser: async (username, password, email, preferences) => {
-    set({ isLoading: true, error: null });
+  loadLocalUser: async () => {
     try {
-      const apiClient = await getApiClient();
-      const result = await apiClient.register(username, password, email, preferences);
-      console.log('User registration result:', result);
-      // 保存用户数据到本地
-      console.log('start call saveUser', result.user)
-      await localDb.saveUser(result.user);
-      console.log('saveUser done')
-      await localDb.setCurrentUser(result.user.id);
-      console.log('setCurrentUser done')
-      // 保存会话
-      console.log('start call setSession', result.token)
-      const sessionStore = useSessionStore.getState();
-      await sessionStore.setSession(result.token);
-      console.log('setSession done')
-      
-      set({ 
-        currentUser: result.user,
-        isLoading: false 
-      });
+      const currentUserData = await localDb.getCurrentUser();
+      if (!currentUserData?.userId) {
+        return null;
+      }
+
+      const user = await localDb.getUser(currentUserData.userId);
+      if (user) {
+        set({ currentUser: user });
+      }
+      return user || null;
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Registration failed',
-        isLoading: false 
-      });
-      throw error;
+      console.error('Failed to load local user:', error);
+      return null;
     }
   },
+
+  // registerUser: async (username, password, email, preferences) => {
+  //   set({ isLoading: true, error: null });
+  //   try {
+  //     // 1. 创建本地用户
+  //     const localUser = await localDb.createLocalUser({
+  //       username,
+  //       email,
+  //       password,
+  //       preferences
+  //     });
+
+  //     // 2. 注册到服务器
+  //     const apiClient = await getApiClient();
+  //     const result = await apiClient.register(
+  //       username, 
+  //       password,
+  //       email,
+  //       preferences
+  //     );
+
+  //     // 3. 更新本地用户，使用服务器ID
+  //     const updatedUser = await localDb.updateUserAfterSync(
+  //       localUser,
+  //       result.user
+  //     );
+
+  //     // 4. 保存会话
+  //     const sessionStore = useSessionStore.getState();
+  //     await sessionStore.setSession(result.token);
+
+  //     set({ 
+  //       currentUser: updatedUser,
+  //       isLoading: false 
+  //     });
+  //   } catch (error) {
+  //     set({
+  //       error: error instanceof Error ? error.message : 'Registration failed',
+  //       isLoading: false
+  //     });
+  //     throw error;
+  //   }
+  // },
 
   loginUser: async (username, password) => {
     set({ isLoading: true, error: null });
     try {
       const apiClient = await getApiClient();
       const result = await apiClient.login(username, password);
-      
-      // 保存或更新本地用户数据
-      await localDb.saveUser(result.user);
+
+      // 创建或更新本地用户记录
+      const localUser: LocalUser = {
+        ...result.user,
+        local_id: result.user.id, // 使用服务器ID作为local_id
+        is_synced: true,
+        pending_sync: false
+      };
+
+      // 保存到本地数据库
+      await localDb.updateUserAfterSync(localUser, result.user);
       await localDb.setCurrentUser(result.user.id);
-      
+
       // 保存会话
       const sessionStore = useSessionStore.getState();
       await sessionStore.setSession(result.token);
-      
+
       set({ 
-        currentUser: result.user,
+        currentUser: localUser,
         isLoading: false 
       });
     } catch (error) {
-      set({ 
+      set({
         error: error instanceof Error ? error.message : 'Login failed',
-        isLoading: false 
+        isLoading: false
       });
       throw error;
     }
   },
 
   logoutUser: async () => {
-    set({ isLoading: true, error: null });
     try {
-      // 清理会话
       const sessionStore = useSessionStore.getState();
       await sessionStore.clearSession();
-      
-      set({ 
-        currentUser: null,
-        isLoading: false 
-      });
+      set({ currentUser: null });
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Logout failed',
-        isLoading: false 
-      });
+      console.error('Logout failed:', error);
       throw error;
     }
   },
@@ -110,105 +145,96 @@ export const useUserStore = create<UserState>((set, get) => ({
     const { currentUser } = get();
     if (!currentUser) throw new Error('No active user');
 
-    set({ isLoading: true, error: null });
     try {
       const apiClient = await getApiClient();
-      const updatedPreferences = {
-        ...currentUser.preferences,
-        ...preferences,
-        lastModified: new Date()
-      };
-      
-      // 先更新本地数据
-      await localDb.savePreferences(currentUser.id, updatedPreferences);
-      
-      // 同步到服务器
       const updatedUser = await apiClient.updatePreferences(
-        currentUser.id, 
-        updatedPreferences
-      );
-      
-      // 更新本地用户数据
-      await localDb.saveUser(updatedUser);
-      
-      set({ 
-        currentUser: updatedUser,
-        isLoading: false 
-      });
-    } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Failed to update preferences',
-        isLoading: false 
-      });
-      throw error;
-    }
-  },
-  
-  syncUserData: async () => {
-    const { currentUser } = get();
-    if (!currentUser) throw new Error('No active user');
-
-    set({ isLoading: true, error: null });
-    try {
-      const syncState = await localDb.getSyncState(currentUser.id);
-      if (!syncState?.pendingChanges) {
-        set({ isLoading: false });
-        return;
-      }
-
-      const apiClient = await getApiClient();
-      const updatedUser = await apiClient.syncUserData(
         currentUser.id,
-        syncState.lastSyncTime
+        preferences
       );
-      
-      // 更新本地数据
-      await localDb.saveUser(updatedUser);
-      
-      set({ 
-        currentUser: updatedUser,
-        isLoading: false 
-      });
+
+      const localUser: LocalUser = {
+        ...updatedUser,
+        local_id: updatedUser.id,
+        is_synced: true,
+        pending_sync: false
+      };
+
+      await localDb.updateUserAfterSync(localUser, updatedUser);
+      set({ currentUser: localUser });
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Sync failed',
-        isLoading: false 
-      });
       throw error;
     }
   },
+  registrationState: {
+    status: 'idle',
+    error: undefined
+  },
 
-  loadUserData: async () => {
-    set({ isLoading: true, error: null });
+  registerUser: async (username, password, email, preferences) => {
+    set({ 
+      isLoading: true, 
+      error: null,
+      registrationState: { status: 'registering' }
+    });
+
     try {
-      // 获取当前用户ID
-      const currentUserData = await localDb.getCurrentUser();
-      if (!currentUserData?.userId) {
-        throw new Error('No user data found');
-      }
 
-      // 从本地数据库加载用户信息
-      const user = await localDb.getUser(currentUserData.userId);
-      if (!user) {
-        throw new Error('User not found');
-      }
+      // 最后一次验证
+      const [usernameExists, emailExists] = await Promise.all([
+        localDb.isUsernameExists(username),
+        localDb.isEmailExists(email)
+      ]);
 
-      // 加载用户偏好设置
-      const preferences = await localDb.getLatestPreferences(user.id);
-      if (preferences) {
-        user.preferences = preferences;
+      if (usernameExists) {
+        throw new Error('Username already taken');
       }
-
-      // 设置当前用户状态
-      set({ 
-        currentUser: user,
-        isLoading: false 
+      if (emailExists) {
+        throw new Error('Email already registered');
+      }
+      // 1. 创建本地用户
+      const localUser = await localDb.createLocalUser({
+        username,
+        email,
+        password,
+        preferences
       });
 
-    } catch (error) {
+      // 2. 注册到服务器
+      const apiClient = await getApiClient();
+      const result = await apiClient.register(
+        username, 
+        password,
+        email,
+        preferences
+      );
+      console.log('get register result===>', result);
+      console.log('get register localUser===>', localUser);
+      // 3. 更新本地用户，使用服务器ID
+      const updatedUser = await localDb.updateUserAfterSync(
+        localUser,
+        result.user
+      );
+      console.log('get register updatedUser===>', updatedUser);
+      // 4.  设置为当前用户并保存会话
+      await localDb.setCurrentUser(updatedUser.id);
+      console.log('set current user===>', updatedUser.id);
+      const sessionStore = useSessionStore.getState();
+      await sessionStore.setSession(result.token);
+      console.log('set session===>', result.token);
+
       set({ 
-        error: error instanceof Error ? error.message : 'Failed to load user data',
-        isLoading: false 
+        currentUser: updatedUser,
+        isLoading: false,
+        registrationState: { status: 'success' }
+      });
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Registration failed',
+        isLoading: false,
+        registrationState: { 
+          status: 'error',
+          error: error instanceof Error ? error.message : 'Registration failed'
+        }
       });
       throw error;
     }

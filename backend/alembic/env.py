@@ -2,7 +2,6 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
-import os
 import sys
 from pathlib import Path
 
@@ -14,7 +13,7 @@ sys.path.append(str(ROOT_DIR))
 from app.core.config import settings
 from app.models.base import Base
 # 导入所有模型以确保它们被注册到 metadata
-from app.models.user import UserSettings,UserSession,User
+from app.models.user import UserSettings,UserSession,User, UserPreferences
 from app.models.menu import Permission, Feature, MenuConfig, FeaturePermission
 # Alembic配置对象
 config = context.config

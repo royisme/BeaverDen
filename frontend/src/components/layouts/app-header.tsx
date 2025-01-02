@@ -18,7 +18,7 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
   return (
     <header className="flex h-16 shrink-0 items-center border-b">
       <div className="flex items-center gap-2 px-3">
-        <SidebarTrigger />
+        {/* <SidebarTrigger /> */}
         <Separator orientation="vertical" className="mr-2 h-4" />
         <BreadcrumbNav items={breadcrumbs} />
       </div>

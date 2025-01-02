@@ -30,17 +30,29 @@ class User(Base):
         nullable=False
     )
     last_login_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
-    sessions: Mapped[List["UserSession"]] = relationship(
+    
+    session: Mapped[List["UserSession"]] = relationship(
         "UserSession",
-        cascade="all, delete-orphan"
+        uselist=True,
+        cascade="all, delete-orphan",
+        back_populates="user"
     )
-    #关系定义
-    settings: Mapped["UserSettings"] = relationship(
+
+    preferences: Mapped["UserPreferences"] = relationship(
+        "UserPreferences",
+        uselist=False,
+        cascade="all, delete-orphan",
+        back_populates="user"
+    )
+
+    
+    settings: Mapped["UserSettings"] = relationship(  # 添加 UserSettings 关系
         "UserSettings",
         uselist=False,
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        back_populates="user"
     )
-    
+
 
     
     # 密码处理方法
@@ -139,7 +151,7 @@ class UserSession(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     
     # 关系
-    # user: Mapped["User"] = relationship("User", back_populates="sessions")
+    user: Mapped["User"] = relationship("User", back_populates="session")
     
     # # 辅助方法
     # def update_device_info(self, device_info: dict) -> None:
@@ -181,19 +193,56 @@ class UserSession(Base):
     
     def __repr__(self) -> str:
         return f"<UserSession {self.id} for user {self.user_id} on device {self.device_name or self.device_id}>"
+
 class UserSettings(Base):
-    """user settings model"""
+    """用户设置模型 (核心账户管理)"""
     __tablename__ = "user_settings"
 
-    # foreign key relationship
     user_id: Mapped[str] = mapped_column(
-        String(36), 
+        String(36),
         ForeignKey("user.id", ondelete="CASCADE"),
         unique=True
     )
+    user: Mapped["User"] = relationship(back_populates="settings")
 
+    # 账户安全设置
+    is_two_factor_enabled: Mapped[bool] = mapped_column(Boolean, default=False, comment="是否启用两步验证")
+    security_question_set: Mapped[bool] = mapped_column(Boolean, default=False, comment="是否设置了安全问题")
 
-    # 基本设置
+    # 通知设置 (全局)
+    email_notifications_enabled: Mapped[bool] = mapped_column(Boolean, default=True, comment="是否启用邮件通知")
+
+    # 其他核心账户设置
+    account_locked: Mapped[bool] = mapped_column(Boolean, default=False, comment="账户是否被锁定")
+    last_password_reset_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True, comment="上次密码重置时间")
+
+    user: Mapped["User"] = relationship(back_populates="settings")
+
+    def to_dict(self) -> dict:
+        return {
+            "isTwoFactorEnabled": self.is_two_factor_enabled,
+            "securityQuestionSet": self.security_question_set,
+            "emailNotificationsEnabled": self.email_notifications_enabled,
+            "accountLocked": self.account_locked,
+            "lastPasswordResetAt": self.last_password_reset_at.isoformat() if self.last_password_reset_at else None,
+        }
+    
+    def __repr__(self) -> str:
+        return f"<UserSettings for user {self.user_id}>"
+    
+class UserPreferences(Base):
+    """user preferences model"""
+    __tablename__ = "user_preferences"
+
+    # foreign key relationship
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("user.id", ondelete="CASCADE"),
+        unique=True
+    )
+    user: Mapped["User"] = relationship(back_populates="preferences")
+
+    # 基本设置 (偏好)
     language: Mapped[Language] = mapped_column(
         SQLEnum(Language),
         default=Language.EN
@@ -206,17 +255,17 @@ class UserSettings(Base):
         SQLEnum(Theme),
         default=Theme.FRESH
     )
-    
-    # 登录设置
+
+    # 登录设置 (偏好)
     login_expire_days: Mapped[int] = mapped_column(Integer, default=7)
     require_password_on_launch: Mapped[bool] = mapped_column(Boolean, default=False)
-    
-    # 通知设置
+
+    # 通知设置 (偏好)
     notification_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
-    
-    
+
     def __repr__(self) -> str:
-        return f"<UserSettings for user {self.user_id}>"
+        return f"<UserPreferences for user {self.user_id}>"
+
     def to_dict(self) -> dict:
         return {
             "language": self.language.value,

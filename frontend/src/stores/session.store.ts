@@ -81,7 +81,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       if (!get().sessionToken) {
         const storedToken = await localDb.getSession();
         if (!storedToken) return false;
-        
+        console.log('validateSession storedToken===>', storedToken);
         await get().setSession(storedToken);
       }
 

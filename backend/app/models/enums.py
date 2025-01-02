@@ -30,3 +30,11 @@ class AccountStatus(enum.Enum):
     ACTIVE = "active"
     SUSPENDED = "suspended"
     DELETED = "deleted"
+class FinanceAccountStatus(enum.Enum):
+    """用户财务账户状态"""
+    ACTIVE = "active"
+    SUSPENDED = "suspended"
+    DELETED = "deleted"
+    EXPIRED = "expired"
+    LOCKED = "locked"
+    INACTIVE = "inactive"

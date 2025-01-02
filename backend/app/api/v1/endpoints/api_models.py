@@ -58,7 +58,7 @@ class LoginResponse(BaseModel):
     token: TokenResponse = Field(..., description="Authentication token")
 
 
-class UserSettingsResponse(BaseModel):
+class UserPreferencesResponse(BaseModel):
     language: str = Field(..., description="Language")
     currency: str = Field(..., description="Currency")
     theme: str = Field(..., description="Theme")
@@ -66,7 +66,7 @@ class UserSettingsResponse(BaseModel):
     require_password_on_launch: bool = Field(..., description="Require password on launch")
     notification_enabled: bool = Field(..., description="Notification enabled")
 
-class UpdateUserSettingsRequest(BaseModel):
+class UpdateUserPreferencesRequest(BaseModel):
     user_id: str = Field(..., description="User ID")
     language: str = Field(..., description="Language")
     currency: str = Field(..., description="Currency")

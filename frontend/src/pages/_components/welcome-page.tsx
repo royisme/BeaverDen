@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { Language } from '@/types/enums'
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -7,6 +7,15 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { MapleIcon } from "@/components/icons/maple-leaf"
 import { useToast } from "@/hooks/use-toast"
+import { localDb } from '@/lib/local-db'
+import { debounce } from 'lodash'
+
+interface ValidationState {
+  username: string | null;
+  email: string | null;
+}
+
+
 
 interface WelcomePageProps {
   onNext: (data: {
@@ -27,6 +36,56 @@ export default function WelcomePage({ onNext, onExit }: WelcomePageProps) {
     password: '',
     confirmPassword: ''
   })
+  const [validation, setValidation] = useState<ValidationState>({
+    username: null,
+    email: null
+  });
+   
+
+  // 添加防抖动的验证函数
+  const debouncedValidate = useCallback(
+    debounce(async (field: 'username' | 'email', value: string) => {
+      if (!value) return;
+
+      try {
+        if (field === 'username') {
+          const exists = await localDb.isUsernameExists(value);
+          setValidation(prev => ({
+            ...prev,
+            username: exists ? 'Username already taken' : null
+          }));
+        } else {
+          const exists = await localDb.isEmailExists(value);
+          setValidation(prev => ({
+            ...prev,
+            email: exists ? 'Email already registered' : null
+          }));
+        }
+      } catch (error) {
+        console.error(`Error validating ${field}:`, error);
+      }
+    }, 500),
+    []
+  );
+  useEffect(() => {
+    return () => {
+      debouncedValidate.cancel();
+    };
+  }, [debouncedValidate]);
+ // 修改输入处理函数
+ const handleInputChange = (field: keyof typeof formData) => 
+  (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
+    // 对用户名和邮箱进行验证
+    if (field === 'username' || field === 'email') {
+      debouncedValidate(field, value);
+    }
+  };
 
   const content = {
     en: {
@@ -154,28 +213,30 @@ export default function WelcomePage({ onNext, onExit }: WelcomePageProps) {
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="username">{t.form.username}</Label>
+            <div className="grid gap-2">
+              <Label htmlFor="username">{t.form.username}</Label>
                 <Input
-                  id="username"
-                  value={formData.username}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    username: e.target.value
-                  }))}
-                />
-              </div>
+                    id="username"
+                    value={formData.username}
+                    onChange={handleInputChange('username')}
+                    className={validation.username ? 'border-red-500' : ''}
+                  />
+                  {validation.username && (
+                    <p className="text-sm text-red-500">{validation.username}</p>
+                    )}
+            </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">{t.form.email}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    email: e.target.value
-                  }))}
+                  onChange={handleInputChange('email')}
+                  className={validation.email ? 'border-red-500' : ''}
                 />
+                {validation.email && (
+                  <p className="text-sm text-red-500">{validation.email}</p>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">{t.form.password}</Label>

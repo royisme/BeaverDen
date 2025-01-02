@@ -55,7 +55,7 @@ def check_and_upgrade_db() -> None:
         logger.info("Database needs upgrade, running migration...")
         command.upgrade(alembic_cfg, "head")
         logger.info("Database upgrade completed successfully")
-        
+        return
     except Exception as e:
         logger.error(f"database migration failed: {str(e)}")
         raise RuntimeError(f"database migration failed: {str(e)}") from e
