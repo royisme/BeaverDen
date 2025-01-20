@@ -1,24 +1,30 @@
-import { Outlet } from 'react-router-dom'
-import { AppSidebar } from './app-sidebar'
-import { Header } from './app-header'
-import { menuGroups } from '@/mock/menuData'
-import { mockUser } from '@/mock/userData'
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { Outlet } from 'react-router-dom';
+import { AppSidebar } from './app-sidebar';
+import { Header } from './app-header';
+import { menuGroups } from '@/mock/menuData';
+import { useUserStore } from '@/stores/user.store';
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-export default function AppContent() {
+export function AppContent() {
+  const { currentUser } = useUserStore();
+
   return (
     <SidebarProvider>
-      <AppSidebar 
-        menuGroups={menuGroups}
-        user={mockUser}
-      />
+      {currentUser && (
+        <AppSidebar 
+          menuGroups={menuGroups}
+          user={currentUser}
+        />
+      )}
       <SidebarInset>
-        <Header title="Good morning, Alex" subtitle="Welcome back" />
+        <Header 
+          title={`Good morning, ${currentUser?.username || 'Guest'}`} 
+          subtitle="Welcome back" 
+        />
         <div className="flex flex-1 flex-col gap-4 p-4">
-
-            <Outlet />
-          </div>
-        </SidebarInset>
+          <Outlet />
+        </div>
+      </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

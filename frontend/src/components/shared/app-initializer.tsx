@@ -11,14 +11,14 @@ export function AppInitializer() {
   const navigate = useNavigate();
   // const location = useLocation();
   
-  const { isInitializing, error, initializeApp, clearError } = useAppStore();
+  const { isInitializing, error, initializeApp, clearError, isInitialized } = useAppStore();
   // const { loadLocalUser } = useUserStore();
   // const { validateSession } = useSessionStore();
   useEffect(() => {
     const initialize = async () => {
       try {
         await initializeApp(); // 只调用一次初始化
-        
+        console.log("initializeApp is called");
         // 根据 redirectPath 进行导航
         const { redirectPath } = useAppStore.getState();
         if (redirectPath) {
@@ -28,50 +28,10 @@ export function AppInitializer() {
         console.error('App initialization failed:', err);
       }
     };
-  
-    initialize();
+    if (!isInitialized) {
+      initialize();
+    }
   }, [initializeApp, navigate]);
-  // useEffect(() => {
-  //   const initialize = async () => {
-  //     console.log('initialize');
-  //     try {
-  //       // 1. 加载本地用户数据
-  //       const localUser = await loadLocalUser();
-  //       console.log('get localUser', localUser);
-  //       if (localUser) {
-  //         // 2. 如果有本地用户，验证会话
-  //         const isValidSession = await validateSession();
-          
-  //         if (!isValidSession) {
-  //           // 会话无效，需要重新登录
-  //           navigate('/login', { replace: true });
-  //           return;
-  //         }
-  //         console.log('isValidSession', isValidSession);
-  //         console.log('location.pathname', location.pathname);
-
-  //         // 会话有效，根据当前路径决定跳转
-  //         const publicPaths = ['/landing', '/login', '/onboarding'];
-  //         if (publicPaths.includes(location.pathname)) {
-  //           navigate('/app', { replace: true });
-  //         }
-  //       } else {
-  //         // 无本地用户，重定向到登录页
-  //         const publicPaths = ['/landing', '/onboarding', '/login'];
-  //         if (!publicPaths.includes(location.pathname)) {
-  //           navigate('/landing', { replace: true });
-  //         }
-  //       }
-
-  //       // 3. 完成初始化
-  //       await initializeApp();
-  //     } catch (err) {
-  //       console.error('App initialization failed:', err);
-  //     }
-  //   };
-
-  //   initialize();
-  // }, [initializeApp, loadLocalUser, validateSession, navigate, location.pathname]);
 
   // 加载状态
   if (isInitializing) {

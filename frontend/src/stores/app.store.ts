@@ -2,14 +2,13 @@
 import { create } from 'zustand';
 import { useUserStore } from '@/stores/user.store';
 import { useSessionStore } from '@/stores/session.store';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+
 
 interface AppState {
   isInitializing: boolean;
   error: string | null;
   redirectPath: string | null;  // 添加重定向路径
-
+  isInitialized: boolean;
   initializeApp: () => Promise<void>;
   clearError: () => void;
 }
@@ -18,7 +17,7 @@ export const useAppStore = create<AppState>((set) => ({
   isInitializing: true,
   error: null,
   redirectPath: null,
-
+  isInitialized: false,
   initializeApp: async () => {
     set({ isInitializing: true, error: null });
     try {
@@ -33,22 +32,26 @@ export const useAppStore = create<AppState>((set) => ({
 
         if (isValidSession) {
           // 会话有效，重定向到dashboard
+          console.log("redirectPath is /app/dashboard");
           set({ 
             redirectPath: '/app/dashboard',
-            isInitializing: false 
+            isInitializing: false,
+            isInitialized: true
           });
         } else {
           // 会话无效，重定向到登录页
           set({ 
             redirectPath: '/login',
-            isInitializing: false 
+            isInitializing: false,
+            isInitialized: true
           });
         }
       } else {
         // 3. 不存在本地用户，重定向到landing
         set({ 
           redirectPath: '/landing',
-          isInitializing: false 
+          isInitializing: false,
+          isInitialized: true
         });
       }
     } catch (error) {

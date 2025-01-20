@@ -88,6 +88,16 @@ class User(Base):
         self.last_login_at = datetime.now(timezone.utc)
 
     
+    # 新增方法
+    def update_nickname(self, nickname: str) -> None:
+        """更新用户昵称"""
+        self.nickname = nickname
+
+    def update_avatar_path(self, avatar_path: str) -> None:
+        """更新用户头像路径"""
+        self.avatar_path = avatar_path
+
+    
     # 辅助方法
     def to_dict(self) -> dict:
         """转换为字典（重写基类方法以排除敏感信息）"""
@@ -99,6 +109,7 @@ class User(Base):
             "avatarPath": self.avatar_path,
             "accountStatus": self.account_status.value,
             "lastLoginAt": self.last_login_at.isoformat() if self.last_login_at else None,
+            "preferences": self.preferences.to_dict() if self.preferences else None,
             "settings": self.settings.to_dict() if self.settings else None
         }
 

@@ -1,4 +1,7 @@
 // types/enums.ts
+
+export const ApiVersion = 'v1';
+
 export enum MenuType {
     FEATURE = "feature",
     SETTING = "setting"
@@ -22,7 +25,14 @@ export enum MenuType {
   
   export enum Currency {
     CAD = "CAD",
-    USD = "USD"
+    USD = "USD",
+    EUR = "EUR",
+    GBP = "GBP",
+    JPY = "JPY",
+    CNY = "CNY",
+    HKD = "HKD",
+    AUD = "AUD",
+    NZD = "NZD"
   }
   
 
@@ -39,7 +49,6 @@ export enum MenuType {
     DELETED = "deleted"
   }
   
-  export const ApiVersion = 'v1';
 
-  export type FlowStep = 'welcome' | 'setup' | 'verification' | 'complete';
+export type FlowStep = 'welcome' | 'setup' | 'verification' | 'complete';
 

@@ -52,48 +52,6 @@ export const useUserStore = create<UserState>((set  , get) => ({
     }
   },
 
-  // registerUser: async (username, password, email, preferences) => {
-  //   set({ isLoading: true, error: null });
-  //   try {
-  //     // 1. 创建本地用户
-  //     const localUser = await localDb.createLocalUser({
-  //       username,
-  //       email,
-  //       password,
-  //       preferences
-  //     });
-
-  //     // 2. 注册到服务器
-  //     const apiClient = await getApiClient();
-  //     const result = await apiClient.register(
-  //       username, 
-  //       password,
-  //       email,
-  //       preferences
-  //     );
-
-  //     // 3. 更新本地用户，使用服务器ID
-  //     const updatedUser = await localDb.updateUserAfterSync(
-  //       localUser,
-  //       result.user
-  //     );
-
-  //     // 4. 保存会话
-  //     const sessionStore = useSessionStore.getState();
-  //     await sessionStore.setSession(result.token);
-
-  //     set({ 
-  //       currentUser: updatedUser,
-  //       isLoading: false 
-  //     });
-  //   } catch (error) {
-  //     set({
-  //       error: error instanceof Error ? error.message : 'Registration failed',
-  //       isLoading: false
-  //     });
-  //     throw error;
-  //   }
-  // },
 
   loginUser: async (username, password) => {
     set({ isLoading: true, error: null });

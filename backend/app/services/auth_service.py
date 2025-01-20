@@ -6,6 +6,7 @@ import logging
 from app.models.user import User,UserPreferences,UserSession
 from app.models.enums import AccountStatus
 from app.api.v1.endpoints.api_models import RegisterRequest,LoginRequest
+from app.utils.helpers import generate_random_avatar_path
 logger = logging.getLogger(__name__)
 
 class AuthService:
@@ -22,6 +23,8 @@ class AuthService:
             user = User(
                 username=user_data.username,
                 email=user_data.email,
+                nickname=user_data.nickname,
+                avatar_path=generate_random_avatar_path(user_data.username),
                 account_status=AccountStatus.ACTIVE
             )
             user.set_password(user_data.password)

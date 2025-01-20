@@ -42,3 +42,7 @@ backend/logs/*.log
 backend/.pytest_cache/
 frontend/logs/
 
+.AI_docs/
+.windsurfrules
+.cursorrules
+

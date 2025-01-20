@@ -43,3 +43,24 @@ class UserService:
             self.db.rollback()
             logger.error(f"Error updating user settings: {str(e)}")
             raise HTTPException(status_code=500, detail="Failed to update user settings")
+        
+    def update_user_avatar(self, user: User, avatar_path: str) -> None:
+        """更新用户头像"""
+        user.avatar_path = avatar_path
+        self.db.commit()
+        self.db.refresh(user)
+        return user
+    
+    def update_user_nickname(self, user: User, nickname: str) -> None:
+        """更新用户昵称"""
+        user.nickname = nickname
+        self.db.commit()
+        self.db.refresh(user)
+        return user
+    
+    def update_user_email(self, user: User, email: str) -> None:
+        """更新用户邮箱"""
+        user.email = email
+        self.db.commit()
+        self.db.refresh(user)
+        return user

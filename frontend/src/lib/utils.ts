@@ -39,3 +39,7 @@ export function generateBreadcrumbs(path: string, menuItems: MenuItem[]): Breadc
   findPath(menuItems)
   return breadcrumbs
 }
+
+export function generateRandomAvatarPath(username: string) {
+  return `https://api.dicebear.com/9.x/miniavs/svg?seed=${username}`
+}

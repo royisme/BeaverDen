@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, TypeVar, Generic
 from datetime import datetime
-from app.models.enums import Language, Currency, Theme
+from app.models.enums import Language, Currency, Theme, FinanceBankName, FinanceAccountType, FinanceAccountCardType, FinanceAccountStatus
 
 
 
@@ -112,3 +112,41 @@ class SystemInitStatus(BaseModel):
     backendStatus: SystemHealthStatus
     databaseStatus: DatabaseStatus
     error: Optional[str] = Field(None, description="error message")
+
+
+class FinanceAccountCreate(BaseModel):
+    account_name: str
+    bank_name: FinanceBankName
+    account_type: FinanceAccountType
+    currency: Currency
+    balance: float
+    card_type: Optional[FinanceAccountCardType] = None
+    account_number: Optional[str] = None
+    status: Optional[FinanceAccountStatus] = FinanceAccountStatus.ACTIVE
+
+class FinanceAccountUpdate(BaseModel):
+    account_name: Optional[str] = None
+    bank_name: Optional[FinanceBankName] = None
+    account_type: Optional[FinanceAccountType] = None
+    currency: Optional[Currency] = None
+    balance: Optional[float] = None
+    card_type: Optional[FinanceAccountCardType] = None
+    account_number: Optional[str] = None
+    status: Optional[FinanceAccountStatus] = None
+
+class FinanceTransactionCreate(BaseModel):
+    account_id: str
+    date: datetime
+    amount: float
+    category: Optional[str] = None
+    merchant: Optional[str] = None
+    description: Optional[str] = None
+    type: str
+
+class FinanceTransactionUpdate(BaseModel):
+    date: Optional[datetime] = None
+    amount: Optional[float] = None
+    category: Optional[str] = None
+    merchant: Optional[str] = None
+    description: Optional[str] = None
+    type: Optional[str] = None

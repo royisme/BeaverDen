@@ -17,6 +17,11 @@ const permissions: Permission[] = [
     id: 3,
     permission_key: "analytics_view",
     description: "View analytics data"
+  },
+  {
+    id: 4,
+    permission_key: "finance_manage",
+    description: "Manage finance operations"
   }
 ]
 
@@ -53,6 +58,14 @@ const features: Feature[] = [
     custom_config: {
       exportFormats: ["pdf", "excel"]
     }
+  },
+  {
+    id: 4,
+    feature_key: "finance_manage",
+    subscription_tier: SubscriptionTier.STANDARD,
+    is_active: true,
+    module_key: "finance",
+    required_permissions: [permissions[4]],
   }
 ]
 
@@ -128,6 +141,49 @@ export const menuItems: MenuItem[] = [
     breadcrumb: {
       title: "Analytics"
     }
+  },
+  {
+    id: 4,
+    menu_key: "finance",
+    is_visible: true,
+    type: MenuType.FEATURE,
+    group: MenuGroup.MAIN,
+    name: "Finance",
+    icon: "Landmark",
+    required_features: [features[4]],
+    breadcrumb: {
+      title: "Finance"
+    },
+    children: [
+      {
+        id: 41,
+        menu_key: "bank",
+        is_visible: true,
+        type: MenuType.FEATURE,
+        group: MenuGroup.MAIN,
+        name: "Bank",
+        icon: "Bank",
+        required_features: [features[4]],
+        breadcrumb: {
+          title: "Bank",
+          parent: "/finance"
+        }
+      },
+      {
+        id: 42,
+        menu_key: "account",
+        is_visible: true,
+        type: MenuType.FEATURE,
+        group: MenuGroup.MAIN,
+        name: "Account",
+        icon: "WalletCards",
+        required_features: [features[4]],
+        breadcrumb: {
+          title: "Account",
+          parent: "/finance"
+        }
+      }
+    ]
   }
 ]
 

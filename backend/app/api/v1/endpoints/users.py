@@ -19,9 +19,10 @@ def get_current_user(Authorize: AuthJWT = Depends(AuthJWT), session: Session = D
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+
 @router.get("/{user_id}/preferences/", response_model=BaseResponse[UserPreferencesResponse])
 async def get_user_preferences(
-    user_id: str,
     current_user: User = Depends(get_current_user),
     user_service: UserService = Depends(get_session)
 ):
@@ -31,7 +32,6 @@ async def get_user_preferences(
 
 @router.put("/{user_id}/preferences/")
 async def update_user_preferences(
-    user_id: str,
     settings_update: UpdateUserPreferencesRequest,
     current_user: User = Depends(get_current_user),
     user_service: UserService = Depends(get_session)
@@ -40,3 +40,31 @@ async def update_user_preferences(
     user_service.update_user_preferences(current_user, settings_update.dict(exclude_unset=True))
     return BaseResponse(status=200, message="User settings updated successfully")
 
+@router.put("/{user_id}/avatar/")
+async def update_user_avatar(
+    avatar_path: str,
+    current_user: User = Depends(get_current_user),
+    user_service: UserService = Depends(get_session)
+):
+    """更新当前用户头像"""
+    user_service.update_user_avatar(current_user, avatar_path)
+    return BaseResponse(status=200, message="User avatar updated successfully")
+
+@router.put("/{user_id}/nickname/")
+async def update_user_nickname(
+    nickname: str,
+    current_user: User = Depends(get_current_user),
+    user_service: UserService = Depends(get_session)
+):
+    """更新当前用户昵称"""
+    user_service.update_user_nickname(current_user, nickname)
+    return BaseResponse(status=200, message="User nickname updated successfully")
+@router.put("/{user_id}/email/")
+async def update_user_email(
+    email: str,
+    current_user: User = Depends(get_current_user),
+    user_service: UserService = Depends(get_session)
+):
+    """更新当前用户邮箱"""
+    user_service.update_user_email(current_user, email)
+    return BaseResponse(status=200, message="User email updated successfully")

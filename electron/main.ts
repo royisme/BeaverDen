@@ -140,7 +140,7 @@ class MainProcess {
         webSecurity: true
       },
       // 添加 macOS 特定配置
-      // titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
+      titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
       trafficLightPosition: { x: 10, y: 10 },
       frame: true,
     });

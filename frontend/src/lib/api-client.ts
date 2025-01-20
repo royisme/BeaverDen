@@ -47,7 +47,7 @@ export class ApiClient {
       password,
       deviceInfo: deviceInfo
     });
-    this.setAccessToken(response.data.data.token.accessToken);
+    this.setAccessToken(response.data.token.accessToken);
     return response.data;
   }
 
@@ -117,6 +117,9 @@ export class ApiClient {
   async getSystemInitStatus(): Promise<SystemInitializationResult> {
     const response = await this.client.get<SystemInitializationResult>('/system/init');
     return response.data;
+  }
+  getClient(): AxiosInstance {
+    return this.client;
   }
 }
 

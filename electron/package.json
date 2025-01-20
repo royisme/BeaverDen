@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "main": "./build/main.js",
   "scripts": {
-    "dev": "ELECTRON_DISABLE_SECURITY_WARNINGS=true tsc --project tsconfig.json && electron .",
+    "dev": "concurrently \"ELECTRON_DISABLE_SECURITY_WARNINGS=true tsc --project tsconfig.json && electron .\" \"cd ../frontend && pnpm dev\"",
     "watch": "tsc -w --project tsconfig.json",
     "build": "tsc --project tsconfig.json",
     "start": "electron .",
@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "concurrently": "^9.1.2",
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
     "typescript": "^5.7.2"

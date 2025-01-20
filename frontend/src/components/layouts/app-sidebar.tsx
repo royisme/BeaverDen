@@ -41,24 +41,27 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ menuGroups, user }) => {
   }, [location.pathname, menuGroups, setCurrentPath])
 
   const handleMenuItemClick = (item: MenuItem) => {
-    const basePath = `/${item.menu_key}`
-    // 如果有子菜单，则默认跳转到子菜单的第一个路径
-    const firstChild = item.children && item.children[0]
-    const path = firstChild ? `${basePath}/${firstChild.menu_key}` : basePath
-    navigate(path)
+    let path = `/${item.menu_key}`;
+
+    if (item.breadcrumb?.parent) {
+      path = `${item.breadcrumb.parent}/${item.menu_key}`;
+    }
+    const url = `/app${path}` 
+    console.log("click menu item", url)
+    navigate(url);
   }
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b relative">
-        <div className="flex items-center gap-2 px-4 py-2">
-          <Wallet className="h-6 w-6 text-primary" />
+      <SidebarHeader className="border-b">
+       <div className="flex items-center gap-2 px-4 py-2">
+          <img src="/logo.png"  width={32} height={32} />
           <span className="font-semibold text-lg">Beaveden</span>
         </div>
         <Button
           variant="ghost"
           size="icon"
-          className="absolute -right-3 top-6 bg-background rounded-full shadow-md hover:bg-accent"
+          className="absolute -right-4 top-6 bg-secondary rounded-full shadow-md hover:bg-accent"
           onClick={toggleSidebar}
         >
           <ChevronLeft className={cn(
