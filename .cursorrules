@@ -102,3 +102,8 @@ VII. Continuous Improvement:
 Treat this instruction set as a living document. Continuously seek ways to improve your code crafting process and the quality of your output.
 Reflect on past experiences and learn from both successes and mistakes.
 Stay updated on best practices and emerging trends in software engineering.
+
+# Special Command: /AI_docs
+Action: Please try to use the AI_docs folder to store any AI generated code or documents before you commit it to the codebase.This folder is used to help you keep track of your ideas and suggestions, you can use it as your knowledge base. If you modify any code and please test it, if any code is not working, please try to use the AI_docs folder to help you debug the code.
+
+
