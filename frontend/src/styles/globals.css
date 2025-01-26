@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -30,6 +29,14 @@
     --chart-3: 120 30% 60%;
     --chart-4: 120 20% 70%;
     --chart-5: 120 10% 80%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
   
   .dark {
@@ -44,20 +51,27 @@
     --secondary: 120 30% 60%;
     --secondary-foreground: 96 100% 98%;
     --muted: 120 20% 30%;
-    --muted-foreground: 96 100% 80%;
+    --muted-foreground: 120 10% 70%;
     --accent: 120 40% 50%;
-    --accent-foreground: 120 10% 10%;
+    --accent-foreground: 96 100% 98%;
     --destructive: 0 70% 50%;
-    --destructive-foreground: 120 10% 10%;
+    --destructive-foreground: 96 100% 98%;
     --border: 120 20% 25%;
     --input: 120 20% 20%;
     --ring: 120 50% 40%;
-    --radius: 0.75rem;
     --chart-1: 120 50% 40%;
     --chart-2: 120 40% 50%;
     --chart-3: 120 30% 60%;
     --chart-4: 120 20% 70%;
     --chart-5: 120 10% 80%;
+    --sidebar-background: 120 10% 15%;
+    --sidebar-foreground: 96 100% 98%;
+    --sidebar-primary: 120 50% 40%;
+    --sidebar-primary-foreground: 96 100% 98%;
+    --sidebar-accent: 120 40% 50%;
+    --sidebar-accent-foreground: 96 100% 98%;
+    --sidebar-border: 120 20% 25%;
+    --sidebar-ring: 120 50% 40%;
   }
 }
  
@@ -104,30 +118,6 @@
   }
 }
 
-@layer base {
-  :root {
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%
-
-  }
-  .dark {
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%
-  }
-}
-
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -164,25 +154,7 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
-/* 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
+
 
 @media (prefers-color-scheme: light) {
   :root {

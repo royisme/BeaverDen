@@ -54,4 +54,8 @@ export default defineConfig({
       }
     }
   },
+  // 支持导入 JSON 文件
+  json: {
+    stringify: true,
+  },
 })

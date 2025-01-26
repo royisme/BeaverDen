@@ -35,7 +35,9 @@ export function AccountForm({ onSubmit, onCancel, onDelete, initialData, isNewAc
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setAccount({ ...account, [name]: value })
+    // Convert string to number for numeric fields
+    const newValue = name === 'balance' ? parseFloat(value) || 0 : value
+    setAccount({ ...account, [name]: newValue })
   }
 
   const handleSelectChange = (name: string, value: string) => {
@@ -114,7 +116,20 @@ export function AccountForm({ onSubmit, onCancel, onDelete, initialData, isNewAc
               </SelectContent>
             </Select>
           </div>
-
+          <div>
+            <Label htmlFor="accountNumber">Account Number</Label>
+            <Input
+              id="accountNumber"
+              name="accountNumber"
+              value={account.accountNumber}
+              type="number"
+              minLength={10}
+              maxLength={20}
+              onChange={handleChange}
+              required
+              className="w-full"
+            />
+          </div>
           <div>
             <Label htmlFor="accountType">Account Type</Label>
             <Select
@@ -174,6 +189,8 @@ export function AccountForm({ onSubmit, onCancel, onDelete, initialData, isNewAc
               type="number"
               value={account.balance}
               onChange={handleChange}
+              min={0}
+              max={999999999}
               required
               className="w-full"
             />
@@ -215,4 +232,3 @@ export function AccountForm({ onSubmit, onCancel, onDelete, initialData, isNewAc
     </div>
   )
 }
-

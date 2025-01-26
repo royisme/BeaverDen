@@ -12,11 +12,19 @@ logger = logging.getLogger(__name__)
 class AuthService:
     def __init__(self, session: Session):
         self.session = session
-    def check_user_exists(self, username: str) -> bool:
-        return self.session.query(User).filter_by(username=username).first() is not None
-    def register_user(self, user_data: RegisterRequest, Authorize: AuthJWT) -> tuple[User, str, str, datetime]:
-        try:
+        logger.debug("AuthService initialized")
 
+    def check_user_exists(self, username: str) -> bool:
+        """检查用户是否已存在"""
+        logger.debug(f"Checking if user exists: {username}")
+        exists = self.session.query(User).filter_by(username=username).first() is not None
+        logger.debug(f"User {username} exists: {exists}")
+        return exists
+
+    def register_user(self, user_data: RegisterRequest, Authorize: AuthJWT) -> tuple[User, str, str, datetime]:
+        """注册新用户"""
+        logger.info(f"Registering new user: {user_data.username}")
+        try:
             # 添加详细日志
             logger.info("Creating user object with username=%s, email=%s,password=%s", user_data.username, user_data.email,user_data.password)
 
@@ -30,6 +38,8 @@ class AuthService:
             user.set_password(user_data.password)
             self.session.add(user)
             self.session.flush()
+            logger.debug(f"User {user_data.username} created in database")
+
             logger.info("start create user settings")
             # 创建用户设置
             preferences = UserPreferences(
@@ -65,16 +75,41 @@ class AuthService:
             self.session.add(user_session)
             self.session.commit()
             
+            logger.info(f"User {user_data.username} registered successfully")
             return user, access_token, refresh_token, expires_at
         except Exception as e:
+            logger.error(f"Error registering user {user_data.username}: {str(e)}")
             self.session.rollback()
-            logger.error(f"User registration failed: {str(e)}")
             raise
 
     def authenticate_user(self, login_request: LoginRequest, Authorize: AuthJWT) -> tuple[User, str, datetime]:
+        """
+        验证用户登录并返回用户信息和令牌
+        
+        Args:
+            login_request: 登录请求数据
+            Authorize: JWT授权对象
+            
+        Returns:
+            tuple[User, str, datetime]: 用户对象、访问令牌和过期时间
+            
+        Raises:
+            HTTPException: 用户名或密码错误时抛出400错误
+        """
+        logger.info(f"Login attempt for user: {login_request.username}")
         user = self.session.query(User).filter_by(username=login_request.username).first()
-        if not user or not user.verify_password(login_request.password):
-            raise HTTPException(status_code=401, detail="Invalid credentials")
+        if not user :
+            logger.warning(f"Login failed: User {login_request.username} not found")
+            raise HTTPException(
+                status_code=412,
+                detail="用户不存在"  # 不暴露具体是哪个错误
+            )
+        if not user.verify_password(login_request.password):
+            logger.warning(f"Login failed: Invalid password for user {login_request.username}")
+            raise HTTPException(
+                status_code=413,
+                detail="用户密码错误"  # 不暴露具体是哪个错误
+            )
         token = Authorize.create_access_token(subject=str(user.id))
         refresh_token = Authorize.create_refresh_token(subject=str(user.id))
         expires_at = Authorize.get_access_token_expires()
@@ -96,4 +131,5 @@ class AuthService:
             self.session.add(user_session)
 
         self.session.commit()
+        logger.info(f"User {login_request.username} logged in successfully")
         return user, token, refresh_token, expires_at

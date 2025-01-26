@@ -1,67 +1,63 @@
 // src/stores/app.store.ts
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { useUserStore } from '@/stores/user.store';
-import { useSessionStore } from '@/stores/session.store';
-
 
 interface AppState {
+  isInitialized: boolean;
   isInitializing: boolean;
   error: string | null;
-  redirectPath: string | null;  // 添加重定向路径
-  isInitialized: boolean;
   initializeApp: () => Promise<void>;
   clearError: () => void;
 }
 
-export const useAppStore = create<AppState>((set) => ({
-  isInitializing: true,
-  error: null,
-  redirectPath: null,
-  isInitialized: false,
-  initializeApp: async () => {
-    set({ isInitializing: true, error: null });
-    try {
-      // 1. 首先加载本地用户
-      const userStore = useUserStore.getState();
-      const localUser = await userStore.loadLocalUser();
+export const useAppStore = create<AppState>()(
+  persist(
+    (set, get) => ({
+      isInitialized: false,
+      isInitializing: false,
+      error: null,
 
-      if (localUser) {
-        // 2. 如果存在本地用户，验证会话
-        const sessionStore = useSessionStore.getState();
-        const isValidSession = await sessionStore.validateSession();
-
-        if (isValidSession) {
-          // 会话有效，重定向到dashboard
-          console.log("redirectPath is /app/dashboard");
-          set({ 
-            redirectPath: '/app/dashboard',
-            isInitializing: false,
-            isInitialized: true
-          });
-        } else {
-          // 会话无效，重定向到登录页
-          set({ 
-            redirectPath: '/login',
-            isInitializing: false,
-            isInitialized: true
-          });
+      initializeApp: async () => {
+        // 如果正在初始化，直接返回
+        if (get().isInitializing) {
+          console.log('[AppStore] Initialization in progress, skipping');
+          return;
         }
-      } else {
-        // 3. 不存在本地用户，重定向到landing
-        set({ 
-          redirectPath: '/landing',
-          isInitializing: false,
-          isInitialized: true
-        });
-      }
-    } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : 'App initialization failed',
-        isInitializing: false,
-        redirectPath: '/landing' // 错误时默认到landing
-      });
-    }
-  },
 
-  clearError: () => set({ error: null })
-}));
+        console.log('[AppStore] Starting initialization');
+        set({ isInitializing: true, error: null });
+
+        try {
+          // 总是加载用户数据，即使应用已初始化
+          const userStore = useUserStore.getState();
+          const user = await userStore.loadLocalUser();
+          console.log('[AppStore] User loaded:', user);
+
+          set({ 
+            isInitializing: false,
+            isInitialized: true,
+            error: null
+          });
+          console.log('[AppStore] Initialization completed');
+        } catch (error) {
+          console.error('[AppStore] Initialization failed:', error);
+          set({ 
+            error: error instanceof Error ? error.message : 'Failed to initialize app',
+            isInitializing: false,
+            isInitialized: false
+          });
+          throw error;
+        }
+      },
+
+      clearError: () => set({ error: null })
+    }),
+    {
+      name: 'app-state',
+      partialize: (state) => ({ 
+        isInitialized: state.isInitialized 
+      })
+    }
+  )
+);

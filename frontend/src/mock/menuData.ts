@@ -10,25 +10,35 @@ const permissions: Permission[] = [
   },
   {
     id: 2,
-    permission_key: "payment_manage",
-    description: "Manage payment operations"
+    permission_key: "transaction_manage",
+    description: "Manage transaction operations"
   },
   {
     id: 3,
-    permission_key: "analytics_view",
-    description: "View analytics data"
+    permission_key: "budget_manage",
+    description: "Manage budget operations"
   },
   {
     id: 4,
-    permission_key: "finance_manage",
-    description: "Manage finance operations"
+    permission_key: "report_view",
+    description: "View reports and analytics"
+  },
+  {
+    id: 5,
+    permission_key: "account_manage",
+    description: "Manage accounts"
+  },
+  {
+    id: 6,
+    permission_key: "settings_manage",
+    description: "Manage settings"
   }
 ]
 
 const features: Feature[] = [
   {
     id: 1,
-    feature_key: "basic_dashboard",
+    feature_key: "dashboard",
     subscription_tier: SubscriptionTier.FREE,
     is_active: true,
     module_key: "dashboard",
@@ -39,10 +49,10 @@ const features: Feature[] = [
   },
   {
     id: 2,
-    feature_key: "payment_processing",
+    feature_key: "transactions",
     subscription_tier: SubscriptionTier.STANDARD,
     is_active: true,
-    module_key: "payment",
+    module_key: "transactions",
     required_permissions: [permissions[1]],
     custom_config: {
       maxTransactions: 1000
@@ -50,22 +60,38 @@ const features: Feature[] = [
   },
   {
     id: 3,
-    feature_key: "advanced_analytics",
+    feature_key: "budget",
+    subscription_tier: SubscriptionTier.STANDARD,
+    is_active: true,
+    module_key: "budget",
+    required_permissions: [permissions[2]],
+  },
+  {
+    id: 4,
+    feature_key: "reports",
     subscription_tier: SubscriptionTier.PREMIUM,
     is_active: true,
-    module_key: "analytics",
-    required_permissions: [permissions[2]],
+    module_key: "reports",
+    required_permissions: [permissions[3]],
     custom_config: {
       exportFormats: ["pdf", "excel"]
     }
   },
   {
-    id: 4,
-    feature_key: "finance_manage",
+    id: 5,
+    feature_key: "accounts",
     subscription_tier: SubscriptionTier.STANDARD,
     is_active: true,
-    module_key: "finance",
+    module_key: "accounts",
     required_permissions: [permissions[4]],
+  },
+  {
+    id: 6,
+    feature_key: "settings",
+    subscription_tier: SubscriptionTier.FREE,
+    is_active: true,
+    module_key: "settings",
+    required_permissions: [permissions[5]],
   }
 ]
 
@@ -77,113 +103,140 @@ export const menuItems: MenuItem[] = [
     custom_order: 1,
     type: MenuType.FEATURE,
     group: MenuGroup.MAIN,
-    name: "Dashboard",
+    name: "概览",
     icon: "LayoutDashboard",
     required_features: [features[0]],
     breadcrumb: {
-      title: "Dashboard"
+      title: "概览"
     }
   },
   {
     id: 2,
-    menu_key: "payments",
+    menu_key: "transactions",
     is_visible: true,
     custom_order: 2,
     type: MenuType.FEATURE,
     group: MenuGroup.MAIN,
-    name: "Payments",
-    icon: "Wallet",
+    name: "交易",
+    icon: "Receipt",
     required_features: [features[1]],
-    children: [
-      {
-        id: 21,
-        menu_key: "transactions",
-        is_visible: true,
-        type: MenuType.FEATURE,
-        group: MenuGroup.MAIN,
-        name: "Transactions",
-        icon: "Receipt",
-        required_features: [features[1]],
-        breadcrumb: {
-          title: "Transactions",
-          parent: "/payments"
-        }
-      },
-      {
-        id: 22,
-        menu_key: "transfers",
-        is_visible: true,
-        type: MenuType.FEATURE,
-        group: MenuGroup.MAIN,
-        name: "Transfers",
-        icon: "ArrowLeftRight",
-        required_features: [features[1]],
-        breadcrumb: {
-          title: "Transfers",
-          parent: "/payments"
-        }
-      }
-    ],
     breadcrumb: {
-      title: "Payments"
+      title: "交易"
     }
   },
   {
     id: 3,
-    menu_key: "analytics",
+    menu_key: "budget",
     is_visible: true,
     custom_order: 3,
     type: MenuType.FEATURE,
     group: MenuGroup.MAIN,
-    name: "Analytics",
-    icon: "BarChart3",
+    name: "预算",
+    icon: "PiggyBank",
     required_features: [features[2]],
     breadcrumb: {
-      title: "Analytics"
+      title: "预算"
     }
   },
   {
     id: 4,
-    menu_key: "finance",
+    menu_key: "reports",
     is_visible: true,
+    custom_order: 4,
     type: MenuType.FEATURE,
     group: MenuGroup.MAIN,
-    name: "Finance",
-    icon: "Landmark",
-    required_features: [features[4]],
+    name: "报表",
+    icon: "BarChart3",
+    required_features: [features[3]],
     breadcrumb: {
-      title: "Finance"
-    },
+      title: "报表"
+    }
+  },
+  {
+    id: 5,
+    menu_key: "accounts",
+    is_visible: true,
+    custom_order: 5,
+    type: MenuType.FEATURE,
+    group: MenuGroup.MAIN,
+    name: "账户",
+    icon: "Wallet",
+    required_features: [features[4]],
     children: [
       {
-        id: 41,
-        menu_key: "bank",
+        id: 51,
+        menu_key: "bank-accounts",
         is_visible: true,
         type: MenuType.FEATURE,
         group: MenuGroup.MAIN,
-        name: "Bank",
-        icon: "Bank",
+        name: "银行账户",
+        icon: "Building2",
         required_features: [features[4]],
         breadcrumb: {
-          title: "Bank",
-          parent: "/finance"
+          title: "银行账户",
+          parent: "/accounts"
         }
       },
       {
-        id: 42,
-        menu_key: "account",
+        id: 52,
+        menu_key: "investment-accounts",
         is_visible: true,
         type: MenuType.FEATURE,
         group: MenuGroup.MAIN,
-        name: "Account",
-        icon: "WalletCards",
+        name: "投资账户",
+        icon: "TrendingUp",
         required_features: [features[4]],
         breadcrumb: {
-          title: "Account",
-          parent: "/finance"
+          title: "投资账户",
+          parent: "/accounts"
+        }
+      },
+      {
+        id: 53,
+        menu_key: "loan-accounts",
+        is_visible: true,
+        type: MenuType.FEATURE,
+        group: MenuGroup.MAIN,
+        name: "贷款账户",
+        icon: "HandCoins",
+        required_features: [features[4]],
+        breadcrumb: {
+          title: "贷款账户",
+          parent: "/accounts"
+        }
+      },
+      {
+        id: 54,
+        menu_key: "other-accounts",
+        is_visible: true,
+        type: MenuType.FEATURE,
+        group: MenuGroup.MAIN,
+        name: "其他账户",
+        icon: "CircleDollarSign",
+        required_features: [features[4]],
+        breadcrumb: {
+          title: "其他账户",
+          parent: "/accounts"
         }
       }
-    ]
+    ],
+    breadcrumb: {
+      title: "账户"
+    }
+  },
+  {
+    id: 6,
+    menu_key: "settings",
+    is_visible: true,
+    custom_order: 6,
+    type: MenuType.SETTING,
+    group: MenuGroup.SYSTEM,
+    name: "设置",
+    icon: "Settings",
+    required_features: [features[5]],
+    breadcrumb: {
+      title: "设置"
+    }
   }
 ]
 
@@ -193,6 +246,12 @@ export const menuGroups = [
     title: "Main Menu",
     type: MenuGroup.MAIN,
     items: menuItems.filter(item => item.group === MenuGroup.MAIN)
+  },
+  {
+    id: "system",
+    title: "System Menu",
+    type: MenuGroup.SYSTEM,
+    items: menuItems.filter(item => item.group === MenuGroup.SYSTEM)
   }
   // 如果有system组，可以在此添加
 ]

@@ -11,7 +11,7 @@ export const accountSchema = z.object({
     accountType: z.enum(Object.values(FinanceAccountType) as [FinanceAccountType, ...FinanceAccountType[]]),
     currency: z.enum(Object.values(Currency) as [Currency, ...Currency[]]),
     cardType: z.enum(Object.values(FinanceAccountCardType) as [FinanceAccountCardType, ...FinanceAccountCardType[]]).optional(),
-    balance: z.number().min(0, "Balance must be a positive number"),
+    balance: z.number().max(999999999, "Balance must be less than 1 billion"),
   });
 
 export type FinanceAccountFormData = z.infer<typeof accountSchema>;

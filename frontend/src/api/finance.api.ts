@@ -1,48 +1,53 @@
 import { getApiClient } from '@/lib/api-client';
-import { FinanceAccount, FinanceTransaction } from '@/types/finance';
+import { FinanceAccount } from '@/types/finance';
+
+// 定义后端 API 接口的请求和响应类型
+interface CreateAccountRequest {
+  account_name: string;
+  bank_name: string;
+  account_type: string;
+  currency: string;
+  balance: number;
+  card_type?: string;
+  account_number?: string;
+}
 
 export async function fetchAccounts(): Promise<FinanceAccount[]> {
   const apiClient = await getApiClient();
-  const response = await apiClient.getClient().get('/finance/accounts');
-  return response.data;
+  return await apiClient.getClient().get('/finance/accounts');
 }
 
 export async function addAccount(account: Omit<FinanceAccount, 'id'>): Promise<FinanceAccount> {
   const apiClient = await getApiClient();
-  const response = await apiClient.getClient().post('/finance/accounts', account);
-  return response.data;
+  // 转换为后端期望的格式
+  const requestData: CreateAccountRequest = {
+    account_name: account.accountName,
+    bank_name: account.bankName,
+    account_type: account.accountType,
+    currency: account.currency,
+    balance: account.balance,
+    card_type: account.cardType,
+    account_number: account.accountNumber
+  };
+  return await apiClient.getClient().post('/finance/accounts', requestData);
 }
 
 export async function updateAccount(account: FinanceAccount): Promise<FinanceAccount> {
   const apiClient = await getApiClient();
-  const response = await apiClient.getClient().put(`/finance/accounts/${account.id}`, account);
-  return response.data;
+  // 转换为后端期望的格式
+  const requestData = {
+    account_name: account.accountName,
+    bank_name: account.bankName,
+    account_type: account.accountType,
+    currency: account.currency,
+    balance: account.balance,
+    card_type: account.cardType,
+    account_number: account.accountNumber
+  };
+  return await apiClient.getClient().put(`/finance/accounts/${account.id}`, requestData);
 }
 
 export async function deleteAccount(id: string): Promise<void> {
   const apiClient = await getApiClient();
-  await apiClient.getClient().delete(`/finance/accounts/${id}`);
-}
-
-export async function fetchTransactions(): Promise<FinanceTransaction[]> {
-  const apiClient = await getApiClient();
-  const response = await apiClient.getClient().get('/finance/transactions');
-  return response.data;
-}
-
-export async function addTransaction(transaction: Omit<FinanceTransaction, 'id'>): Promise<FinanceTransaction> {
-  const apiClient = await getApiClient();
-  const response = await apiClient.getClient().post('/finance/transactions', transaction);
-  return response.data;
-}
-
-export async function updateTransaction(transaction: FinanceTransaction): Promise<FinanceTransaction> {
-  const apiClient = await getApiClient();
-  const response = await apiClient.getClient().put(`/finance/transactions/${transaction.id}`, transaction);
-  return response.data;
-}
-
-export async function deleteTransaction(id: string): Promise<void> {
-  const apiClient = await getApiClient();
-  await apiClient.getClient().delete(`/finance/transactions/${id}`);
+  return await apiClient.getClient().delete(`/finance/accounts/${id}`);
 }

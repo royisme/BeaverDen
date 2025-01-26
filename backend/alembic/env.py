@@ -14,6 +14,8 @@ from app.core.config import settings
 from app.models.base import Base
 # 导入所有模型以确保它们被注册到 metadata
 from app.models.user import UserSettings,UserSession,User, UserPreferences
+from app.models.transaction import Transaction, RawTransaction, ImportBatch, TransactionCategory
+from app.models.finance import FinanceAccount,Budget
 from app.models.menu import Permission, Feature, MenuConfig, FeaturePermission
 # Alembic配置对象
 config = context.config

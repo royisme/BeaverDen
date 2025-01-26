@@ -9,6 +9,9 @@ interface RuntimeConfig {
   backendPort: number;
   appMode: 'development' | 'production';
   timestamp: number;
+  isPackaged: boolean;
+  version: string;
+  buildId: string;
   securityKeys: {
     secretKey: string;
     encryptionKey: string;
@@ -57,6 +60,16 @@ export class ConfigManager {
       // 确保配置目录存在
       await fs.mkdir(path.dirname(this.configPath), { recursive: true });
 
+      try {
+        // 尝试加载现有配置
+        this.currentConfig = await this.loadConfig();
+        console.log('Loaded existing runtime configuration:', this.configPath);
+        return;
+      } catch (error) {
+        // 如果配置不存在或无效，则生成新配置
+        console.log('No valid configuration found, generating new one...');
+      }
+
       // 获取可用端口
       const port = await this.findAvailablePort();
       const securityKeys = this.generateSecurityKeys();
@@ -66,13 +79,16 @@ export class ConfigManager {
         backendPort: port,
         appMode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
         timestamp: Date.now(),
+        isPackaged: app.isPackaged,
+        version: app.getVersion(),
+        buildId: Date.now().toString(),
         securityKeys: securityKeys
       };
 
       // 写入配置文件
       await this.saveConfig();
       
-      console.log('Runtime configuration initialized:', this.configPath);
+      console.log('New runtime configuration initialized:', this.configPath);
     } catch (error) {
       console.error('Failed to initialize config:', error);
       throw error;

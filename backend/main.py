@@ -1,192 +1,235 @@
 # backend/main.py
+import os
+import sys
+import signal
+import logging
+import logging.handlers
+from pathlib import Path
+from typing import List
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import typer
-import signal
-import sys
-import os
-from pathlib import Path
-import logging
-import logging.handlers
-from app.core.runtime_config import RuntimeConfigManager
-from app.core.config import settings
-from app.api.v1.router import api_router
-from app.db.session import create_start_app_handler, create_stop_app_handler
+from pydantic import ValidationError
 from jwt.exceptions import PyJWTError
 from fastapi.exceptions import HTTPException, RequestValidationError
-from pydantic import ValidationError
-from app.core.exception_handlers import jwt_exception_handler, http_exception_handler, validation_exception_handler, pydantic_validation_exception_handler
-from app.core.auth_jwt import AuthJWT
-from app.db.migrations import check_and_upgrade_db
-# 设置日志记录
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
+from app.core.config import settings
+from app.core.runtime_config import RuntimeConfigManager
+from app.core.exception_handlers import (
+    jwt_exception_handler,
+    http_exception_handler,
+    validation_exception_handler,
+    pydantic_validation_exception_handler,
+)
+from app.api.v1.router import api_router
+from app.db.session import create_start_app_handler, create_stop_app_handler
+from app.db.migrations import check_and_upgrade_db
+
+# 初始化 Typer CLI
 cli = typer.Typer()
 
-def get_project_root():
+# 配置根日志记录器
+logger = logging.getLogger(__name__)
+
+def get_project_root() -> Path:
+    """动态获取项目根目录"""
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        # 打包后的 Electron 环境
-        project_root = Path(sys._MEIPASS).resolve().parent / "backend"
-    else:
-        # 开发环境
-        project_root = Path(__file__).resolve().parents[1]
-    return project_root
-settings.PROJECT_ROOT = get_project_root()
-app = FastAPI(title="Beaveden Backend")
-def handle_shutdown(signum, frame):
-    """处理终止信号的函数"""
-    logger.info("接收到终止信号，正在清理资源...")
-    # 确保数据库连接已关闭
-    try:
-        app.state.engine.dispose()
-        logger.info("数据库连接已关闭")
-    except Exception as e:
-        logger.error(f"关闭数据库连接时发生错误: {str(e)}")
-    
-    sys.exit(0)
+        # 打包后的环境
+        return Path(sys._MEIPASS).resolve().parent / "backend"
+    # 开发环境
+    return Path(__file__).resolve().parents[1]
 
-def setup_signal_handlers():
-    """设置信号处理器"""
-    signal.signal(signal.SIGTERM, handle_shutdown)
-    signal.signal(signal.SIGINT, handle_shutdown)
-    logger.info("信号处理器已设置")
-
-def create_app(config_path: str) -> FastAPI:
-    # 初始化日志系统
-    setup_logging()
-    logger = logging.getLogger(__name__)
-    logger.info("Starting application initialization...")
-
-    # 初始化运行时配置
-    try:
-        runtime_config = RuntimeConfigManager.initialize(config_path)
-        logger.info("Runtime configuration initialized successfully")
-    except Exception as e:
-        logger.error(f"Failed to initialize runtime config: {str(e)}")
-        raise
-    
-    app = FastAPI(title=settings.PROJECT_NAME)
-    setup_logging()
-
-    # CORS配置
-    origins = [
-        f"http://localhost:{runtime_config.config.backendPort}",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "electron://localhost"
-    ] + settings.ADDITIONAL_CORS_ORIGINS
+def configure_cors(app: FastAPI, origins: List[str]) -> None:
+    """配置CORS中间件"""
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=origins,
+        allow_origins=["*"] if settings.DEBUG else origins,  # 在开发模式下允许所有源
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["*"],  # 允许所有方法
+        allow_headers=["*"],  # 允许所有头部
+        expose_headers=["*"],
         max_age=3600,
     )
-   # 异常处理
-    app.add_exception_handler(PyJWTError, lambda r, e: jwt_exception_handler(e))
-    app.add_exception_handler(HTTPException, lambda r, e: http_exception_handler(e))
-    app.add_exception_handler(RequestValidationError, lambda r, e: validation_exception_handler(e))
-    app.add_exception_handler(ValidationError, lambda r, e: pydantic_validation_exception_handler(e))
-    # 注册路由
+
+def register_exception_handlers(app: FastAPI) -> None:
+    """注册全局异常处理器"""
+    app.add_exception_handler(PyJWTError, jwt_exception_handler)
+    app.add_exception_handler(HTTPException, http_exception_handler)
+    app.add_exception_handler(RequestValidationError, validation_exception_handler)
+    app.add_exception_handler(ValidationError, pydantic_validation_exception_handler)
+
+def register_routers(app: FastAPI) -> None:
+    """注册应用路由"""
+    from app.core.auth_jwt import AuthJWT
+    from fastapi import Depends
+    
+    # 添加全局依赖
+    app.dependency_overrides[AuthJWT] = lambda: AuthJWT()
+    
     app.include_router(api_router, prefix="/api/v1")
 
-    # 启动和关闭事件
-    app.add_event_handler("startup", create_start_app_handler(app))
-    app.add_event_handler("startup", check_and_upgrade_db) # 数据库迁移
+def create_app(config_path: str = None) -> FastAPI:
+    """应用工厂函数"""
+    # 初始化运行时配置
+    if config_path:
+        try:
+            runtime_config = RuntimeConfigManager.initialize(config_path)
+            # 应用运行时配置
+            settings.apply_runtime_config(runtime_config.config)
+            logger.info("Runtime configuration initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize runtime config: {str(e)}")
+            raise    
 
+    # 初始化基础配置
+    settings.PROJECT_ROOT = get_project_root()
+    
+    # 创建FastAPI实例
+    app = FastAPI(
+        title=settings.PROJECT_NAME,
+        debug=settings.DEBUG,
+        version=settings.VERSION
+    )
+
+    
+    # 配置核心功能
+    configure_cors(
+        app,
+        origins=[
+            f"http://localhost:{settings.BACKEND_PORT}",
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "electron://localhost"
+        ] + settings.ADDITIONAL_CORS_ORIGINS
+    )
+    register_exception_handlers(app)
+    register_routers(app)
+
+    # 添加生命周期事件
+    app.add_event_handler("startup", create_start_app_handler(app))
     app.add_event_handler("shutdown", create_stop_app_handler(app))
+    app.add_event_handler("startup", check_and_upgrade_db)
 
     return app
-def setup_logging():
-    """配置日志系统"""
-    # 在开发环境下使用项目目录，生产环境使用USER_DATA_PATH
-    if settings.ENV == "development":
-        log_dir = Path(settings.PROJECT_ROOT) / "backend/logs"
-    else:
-        log_dir = settings.USER_DATA_PATH / "logs"
-    
-    # 创建日志目录
-    log_dir.mkdir(exist_ok=True)
-    log_file = log_dir / f"beaveden_{settings.ENV}.log"
 
-    # 配置日志格式
+def configure_logging() -> None:
+    """集中化日志配置"""
+    # 确定日志目录
+    log_dir = (
+        settings.PROJECT_ROOT / "logs"
+        if settings.ENV == "development"
+        else settings.USER_DATA_PATH / "logs"
+    )
+    log_dir.mkdir(parents=True, exist_ok=True)
+    
+    # 日志文件路径
+    log_file = log_dir / f"{settings.PROJECT_NAME}_{settings.ENV}.log"
+    
+    # 日志格式配置
     formatter = logging.Formatter(
         fmt='%(asctime)s.%(msecs)03d [%(levelname)s] %(name)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
-
-    # 配置文件处理器，使用 RotatingFileHandler 进行日志轮转
+    
+    # 文件处理器（带日志轮转）
     file_handler = logging.handlers.RotatingFileHandler(
         log_file,
-        maxBytes=10*1024*1024,  # 10MB
+        maxBytes=10 * 1024 * 1024,  # 10MB
         backupCount=5,
         encoding='utf-8'
     )
     file_handler.setFormatter(formatter)
-    file_handler.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
-
-    # 配置控制台处理器
+    file_handler.setLevel(logging.DEBUG)
+    
+    # 控制台处理器
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
-    console_handler.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
-
+    console_handler.setLevel(logging.DEBUG)
+    
     # 配置根日志记录器
     root_logger = logging.getLogger()
-    # 清除现有的处理器
     root_logger.handlers.clear()
-    root_logger.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
+    root_logger.setLevel(logging.DEBUG)
     root_logger.addHandler(file_handler)
     root_logger.addHandler(console_handler)
-
-    # 设置一些特定模块的日志级别
-    logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
+    
+    # 配置应用日志记录器
+    app_logger = logging.getLogger('app')
+    app_logger.setLevel(logging.DEBUG)
+    
+    # 设置第三方库日志级别
+    logging.getLogger("uvicorn.access").setLevel(logging.INFO)
     logging.getLogger("sqlalchemy.engine").setLevel(
         logging.INFO if settings.DB_ECHO else logging.WARNING
     )
+    
+    # 输出一些初始日志以确认配置
+    app_logger.debug("Debug logging enabled")
+    app_logger.info(f"Logging configured in {settings.ENV} mode")
+    
+    logger.info(f"Logging configured in {settings.ENV} mode")
+    logger.debug("Debug logging enabled" if settings.DEBUG else "Debug logging disabled")
 
-    # 记录初始日志
-    logger = logging.getLogger(__name__)
-    logger.info(f"Logger initialized in {settings.ENV} mode")
-    logger.info(f"Log file location: {log_file}")
-    logger.debug("Debug logging is enabled")
-def start_from_electron(config_path: str):
-    """从Electron启动应用"""
+def setup_signal_handlers(app: FastAPI) -> None:
+    """配置信号处理器"""
+    def shutdown_handler(signum, frame):
+        logger.info(f"Received signal {signum}, initiating shutdown...")
+        # 可以添加应用级别的清理逻辑
+        sys.exit(0)
+
+    signal.signal(signal.SIGTERM, shutdown_handler)
+    signal.signal(signal.SIGINT, shutdown_handler)
+    logger.info("Signal handlers configured with application context")
+
+@cli.command()
+def start_dev(
+    port: int = typer.Option(8486, help="Port to run the development server"),
+    reload: bool = typer.Option(True, help="Enable auto-reload")
+):
+    """启动开发服务器"""
+    configure_logging()
+    app = create_app()
+    
+    logger.info(f"Starting development server on port {port}")
+    uvicorn.run(
+        app,
+        host="127.0.0.1",
+        port=port,
+        reload=reload,
+        log_level="info"
+    )
+
+@cli.command()
+def start_prod(config_path: str = typer.Argument(..., help="Path to runtime config")):
+    """启动生产服务器（供Electron调用）"""
+    # 第一步：初始化配置和日志
+    configure_logging()
+    
+    # 第二步：创建应用实例
     config_path = os.path.join(config_path, "runtime-config.json")
-    # 设置信号处理器
-    setup_signal_handlers()
-
-    # 创建应用
     app = create_app(config_path)
     
-    # 获取运行时配置
+    # 第三步：配置信号处理器（必须在app创建之后）
+    setup_signal_handlers(app)
+    
+    # 第四步：获取运行时配置
     runtime_config = RuntimeConfigManager.get_instance()
-    port = runtime_config.get_port()
-
-    # 启动服务器
-    logger = logging.getLogger(__name__)
-    logger.info(f"Electron: Starting backend server on port {port}...")
-    try:
-        uvicorn.run(
-            app,
-            host="127.0.0.1",
-            port=port,
-            log_level="info"
-        )
-    except Exception as e:
-        logger.error(f"Electron: Failed to start backend server: {str(e)}")
-        sys.exit(1)
+    port,_ = runtime_config.get_network_config()
+    # 第五步：启动服务器
+    logger.info(f"Starting production server on port {port}")
+    uvicorn.run(
+        app,
+        host="127.0.0.1",
+        port=port,
+        log_level="info"
+    )
 
 if __name__ == "__main__":
-    # 设置基本日志配置
-
-    electron_user_data_path = os.environ.get("ELECTRON_USER_DATA_PATH")
-    print("data path:",electron_user_data_path)
-    if electron_user_data_path:
-        settings.USER_DATA_PATH = electron_user_data_path
-        start_from_electron(electron_user_data_path)
-
+    # 检测Electron环境变量
+    if electron_user_data := os.environ.get("ELECTRON_USER_DATA_PATH"):
+        settings.USER_DATA_PATH = electron_user_data
+        start_prod(electron_user_data)
     else:
         cli()

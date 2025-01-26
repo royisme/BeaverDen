@@ -9,22 +9,30 @@ export function AppContent() {
   const { currentUser } = useUserStore();
 
   return (
-    <SidebarProvider>
+<SidebarProvider>
+  <div className="flex h-screen w-screen overflow-hidden">
+    <div className="flex-shrink-0">
       {currentUser && (
         <AppSidebar 
           menuGroups={menuGroups}
           user={currentUser}
         />
       )}
-      <SidebarInset>
+    </div>
+    <div className="flex-1 flex flex-col min-h-0 w-0">
+      <SidebarInset className="flex-1 flex flex-col min-h-0">
         <Header 
           title={`Good morning, ${currentUser?.username || 'Guest'}`} 
           subtitle="Welcome back" 
         />
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <Outlet />
-        </div>
+        <main className="flex-1 overflow-auto">
+          <div className="h-full">
+            <Outlet />
+          </div>
+        </main>
       </SidebarInset>
-    </SidebarProvider>
+    </div>
+  </div>
+</SidebarProvider>
   );
 }

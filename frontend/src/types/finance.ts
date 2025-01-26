@@ -64,25 +64,120 @@ export interface FinanceAccount {
     currency: Currency;
     balance: number;
     status?: FinanceAccountStatus | FinanceAccountStatus.ACTIVE;
-  }
+}
 
+export enum TransactionDirection {
+  INFLOW = "inflow",
+  OUTFLOW = "outflow"
+}
 
+export enum TransactionType {
+  EXPENSE = "expense",
+  INCOME = "income",
+  TRANSFER_OUT = "transfer_out",
+  TRANSFER_IN = "transfer_in",
+  REFUND = "refund",
+  ADJUSTMENT = "adjustment"
+}
 
+export enum TransactionStatus {
+  PENDING = "pending",
+  COMPLETED = "completed",
+  FAILED = "failed",
+  CANCELLED = "cancelled",
+  RECURRING = "recurring",
+  CLEARED = "cleared"
+}
 
-export interface BankTheme {
-  background: string;
-  textColor: string;
+export enum TransactionCategory {
+  TRANSFER = "transfer",
+  PAYMENT = "payment",
+  BILL_PAYMENT = "bill_payment",
+  UTILITY = "utility",
+  GROCERY = "grocery",
+  DINING = "dining",
+  SHOPPING = "shopping",
+  GAS = "gas",
+  ENTERTAINMENT = "entertainment",
+  PAYROLL = "payroll",
+  OTHER = "other"
+}
+
+export enum BankStatementFormat {
+  CSV = "csv",
+  // OFX = "ofx",
+  // QFX = "qfx",
+  // PDF = "pdf",
+  EXCEL = "excel"
 }
 
 export interface FinanceTransaction {
   id: string;
   accountId: string;
+  linkedAccountId?: string;  // 用于转账交易
+  linkedTransactionId?: string;  // 用于转账交易的关联交易ID
   date: string;
+  postedDate?: string;  // 银行过账日期
   amount: number;
-  category: string;
+  currency: Currency;
+  type: TransactionType;
+  category: TransactionCategory;
   merchant: string;
   description: string;
-  type: 'Income' | 'Expense' | 'Transfer';
+  notes?: string;
+  status: TransactionStatus;
+  tags?: string[];
+  metadata?: Record<string, any>;  // 存储原始交易数据或其他元数据
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ImportBatch {
+  id: string;
+  userId: string;
+  accountId: string;
+  fileName: string;
+  status: string;
+  errorMessage?: string;
+  processedCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProcessedTransaction {
+  transactionDate: string;
+  description: string;
+  amount: string;
+  direction: TransactionDirection;
+  category: TransactionCategory;
+  cardLast4?: string;
+  accountNumber?: string;
+}
+
+export interface RawTransaction {
+  id: string;
+  rowNumber: number;
+  rawData: Record<string, any>;
+  processedData?: ProcessedTransaction;
+  status: string;
+  errorMessage?: string;
+  transactionId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ImportBatchResult {
+  batch: ImportBatch;
+  results: Array<{
+    id: string;
+    rowNumber: number;
+    processedData: ProcessedTransaction;
+  }>;
+}
+
+export interface BankTheme {
+  background: string;
+  textColor: string;
 }
 
 export interface Merchant {
@@ -93,3 +188,24 @@ export interface Merchant {
   metadata?: Record<string, any>;
 }
 
+export interface TransactionFormData {
+  accountId: string;
+  linkedAccountId?: string;
+  date: string;
+  postedDate?: string;
+  amount: number;
+  currency: Currency;
+  type: TransactionType;
+  category: TransactionCategory;
+  merchant: string;
+  description: string;
+  notes?: string;
+  status: TransactionStatus;
+  tags?: string[];
+}
+
+export interface TransactionFormProps {
+  initialData?: Partial<TransactionFormData>;
+  onSubmit: (data: TransactionFormData) => Promise<void>;
+  onCancel: () => void;
+}

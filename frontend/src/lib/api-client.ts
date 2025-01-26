@@ -1,69 +1,92 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { getBackendUrl, getDeviceInfo } from './electron-utils';
-import { User, AuthenticationResult, UserPreferences, DeviceInfo } from '@/types/user';
-import { ApiVersion } from '@/types/enums';
+import { User, UserPreferences,AuthenticationResult , DeviceInfo, SessionToken } from '@/types/user';
 import { SystemInitializationResult } from '@/types/system';
-import { SessionToken } from '@/types/user';
+import { BaseResponse } from '@/types/base-response';
+import { ApiVersion } from '@/types/enums';
+
+// 创建一个类型来处理 axios 拦截器的类型转换
+declare module 'axios' {
+  export interface AxiosInstance {
+    get<T = any>(url: string, config?: any): Promise<T>;
+    post<T = any>(url: string, data?: any, config?: any): Promise<T>;
+    put<T = any>(url: string, data?: any, config?: any): Promise<T>;
+    patch<T = any>(url: string, data?: any, config?: any): Promise<T>;
+    delete<T = any>(url: string, config?: any): Promise<T>;
+  }
+}
+
 
 export class ApiClient {
   private client: AxiosInstance;
   private accessToken: string | null = null;
 
-  constructor(private baseUrl: string) {
+  constructor(url: string = '/api') {
     this.client = axios.create({
-      baseURL: `${baseUrl}/api/${ApiVersion}`,
+      baseURL: `${url}/api/${ApiVersion}`,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     // 请求拦截器：添加认证token
-    this.client.interceptors.request.use(config => {
-      if (this.accessToken) {
-        config.headers.Authorization = `Bearer ${this.accessToken}`;
+    this.client.interceptors.request.use(
+      async (config: InternalAxiosRequestConfig) => {
+        if (this.accessToken) {
+          config.headers.Authorization = `Bearer ${this.accessToken}`;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
       }
-      return config;
-    });
+    );
 
-    // 响应拦截器：处理错误
+    // 响应拦截器：自动提取 data 字段
     this.client.interceptors.response.use(
-      response => response,
-      error => {
-        throw error;
+      (response: AxiosResponse<BaseResponse<any>>) => {
+        const baseResponse = response.data;
+        if (baseResponse.status !== 200) {
+          return Promise.reject(new Error(baseResponse.message || 'Request failed'));
+        }
+        return baseResponse.data;
+      },
+      (error) => {
+        if (error.response?.data?.message) {
+          return Promise.reject(new Error(error.response.data.message));
+        }
+        return Promise.reject(error);
       }
     );
   }
 
-  setAccessToken(token: string | null): void {
+  setAccessToken(token: string | null) {
     this.accessToken = token;
   }
 
-  // 认证相关
   async login(username: string, password: string): Promise<AuthenticationResult> {
     const deviceInfo = await getDeviceInfo();
 
-    const response = await this.client.post<AuthenticationResult>('/auth/login', {
+    const result = await this.client.post<AuthenticationResult>('/auth/login', {
       username,
       password,
-      deviceInfo: deviceInfo
+      deviceInfo
     });
-    this.setAccessToken(response.data.token.accessToken);
-    return response.data;
+    
+    if (result.token) {
+      this.setAccessToken(result.token.accessToken);
+    }
+    return result;
   }
 
   async register(
-    username: string, 
-    password: string, 
+    username: string,
+    password: string,
     email: string,
-    preferences: UserPreferences
+    preferences: UserPreferences,
   ): Promise<AuthenticationResult> {
     const deviceInfo = await getDeviceInfo();
-    const response = await this.client.post<
-    {
-      status: number;
-      message: string;
-      data: AuthenticationResult;
-    }    >('/auth/register', {
+    const result = await this.client.post<AuthenticationResult>('/auth/register', {
       username,
       password,
       email,
@@ -71,53 +94,32 @@ export class ApiClient {
       deviceInfo
     });
     
-    if (response.data.data.token) {
-      this.setAccessToken(response.data.data.token.accessToken);
+    if (result.token) {
+      this.setAccessToken(result.token.accessToken);
     }
-    return response.data.data;
+    return result;
   }
 
-  async refreshToken(currentRefreshToken: string): Promise<SessionToken> {
-    const response = await this.client.post<{ 
-      accessToken: string;
-      refreshToken: string;
-      expiresAt: string;
-    }>('/auth/refreshToken', {}, {
-      headers: {
-        Authorization: `Bearer ${currentRefreshToken}`,
-      },
+  async refreshToken(token: string): Promise<SessionToken> {
+    return await this.client.post<SessionToken>('/auth/refresh', { token });
+  }
+
+  async verifySession(userId: string, deviceId: string, token: string): Promise<boolean> {
+    return await this.client.post<boolean>('/auth/verify', {
+      userId,
+      deviceId,
+      token
     });
-
-    return {
-      accessToken: response.data.accessToken,
-      refreshToken: response.data.refreshToken,
-      expiresAt: new Date(response.data.expiresAt)
-    };
   }
 
-  async logout(): Promise<void> {
-    await this.client.post('/auth/logout');
-    this.setAccessToken(null);
+  async updatePreferences(userId: string, preferences: Partial<UserPreferences>): Promise<User> {
+    return await this.client.put<User>(`/users/${userId}/preferences`, preferences);
   }
 
-  // 用户数据同步
-  async syncUserData(userId: string, lastSyncTime: Date): Promise<User> {
-    const response = await this.client.post<User>(`/users/${userId}/sync`, {
-      lastSyncTime: lastSyncTime.toISOString()
-    });
-    return response.data;
+  async initializeSystem(): Promise<SystemInitializationResult> {
+    return await this.client.get<SystemInitializationResult>('/system/init');
   }
 
-  async updatePreferences(userId: string, preferences: Partial<UserPreferences>
-  ): Promise<User> {
-    const response = await this.client.put<User>(`/users/${userId}/preferences`, preferences);
-    return response.data;
-  }
-
-  async getSystemInitStatus(): Promise<SystemInitializationResult> {
-    const response = await this.client.get<SystemInitializationResult>('/system/init');
-    return response.data;
-  }
   getClient(): AxiosInstance {
     return this.client;
   }
@@ -131,5 +133,9 @@ export async function getApiClient(): Promise<ApiClient> {
     const backendUrl = await getBackendUrl();
     apiClientInstance = new ApiClient(backendUrl);
   }
+  // const token = useSessionStore.getState().sessionToken;
+  // if (token) {
+  //   apiClientInstance.setAccessToken(token.accessToken);
+  // }
   return apiClientInstance;
 }

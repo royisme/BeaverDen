@@ -3,8 +3,6 @@ import { createRoot } from 'react-dom/client'
 import { AppProviders } from '@/providers/app-providers'
 import { ErrorBoundary } from '@/components/shared/error-boundary'
 import App from './App'
-
-// 导入全局样式
 import '@/styles/globals.css'
 
 // 创建根元素

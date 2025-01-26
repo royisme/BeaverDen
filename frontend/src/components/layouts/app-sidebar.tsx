@@ -52,16 +52,16 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ menuGroups, user }) => {
   }
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b">
-       <div className="flex items-center gap-2 px-4 py-2">
+    <Sidebar className="bg-primary">
+      <SidebarHeader>
+       <div className="flex items-center space-x-2 py-6 px-4">
           <img src="/logo.png"  width={32} height={32} />
           <span className="font-semibold text-lg">Beaveden</span>
         </div>
         <Button
           variant="ghost"
           size="icon"
-          className="absolute -right-4 top-6 bg-secondary rounded-full shadow-md hover:bg-accent"
+          className="absolute -right-4 top-6 bg-primary/90 rounded-full shadow-md hover:bg-accent"
           onClick={toggleSidebar}
         >
           <ChevronLeft className={cn(

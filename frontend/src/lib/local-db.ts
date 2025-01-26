@@ -31,17 +31,15 @@ interface BeavedenDB extends DBSchema {
     };
   };
   currentUser: {
-    key: string; // Keep this as string
+    key: string;
     value: {
-      key: 'current'; // Add this line
       userId: string;
       lastAccess: Date;
     };
   };
   sessions: {
-    key: string; // Keep this as string
+    key: string;
     value: {
-      key: 'current'; // Add this line
       token: SessionToken;
       timestamp: Date;
     };
@@ -51,13 +49,35 @@ interface BeavedenDB extends DBSchema {
 export class LocalDatabase {
   private dbPromise = openDB<BeavedenDB>(DB_NAME, DB_VERSION, {
     upgrade(db) {
-      const userStore = db.createObjectStore('users', { keyPath: 'id' });
-      userStore.createIndex('by-username', 'username', { unique: true });
-      userStore.createIndex('by-email', 'email', { unique: true });
+      console.log('[LocalDB] Database upgrade started');
+      
+      // Create users store if it doesn't exist
+      if (!db.objectStoreNames.contains('users')) {
+        console.log('[LocalDB] Creating users store');
+        const userStore = db.createObjectStore('users', { keyPath: 'id' });
+        userStore.createIndex('by-username', 'username', { unique: true });
+        userStore.createIndex('by-email', 'email', { unique: true });
+      }
 
-      db.createObjectStore('preferences', { keyPath: ['userId', 'lastModified'] });
-      db.createObjectStore('currentUser', { keyPath: 'key' }); // Keep keyPath: 'key'
-      db.createObjectStore('sessions', { keyPath: 'key' }); // Add keyPath: 'key'
+      // Create preferences store if it doesn't exist
+      if (!db.objectStoreNames.contains('preferences')) {
+        console.log('[LocalDB] Creating preferences store');
+        db.createObjectStore('preferences', { keyPath: ['userId', 'lastModified'] });
+      }
+
+      // Create currentUser store if it doesn't exist
+      if (!db.objectStoreNames.contains('currentUser')) {
+        console.log('[LocalDB] Creating currentUser store');
+        db.createObjectStore('currentUser');  
+      }
+
+      // Create sessions store if it doesn't exist
+      if (!db.objectStoreNames.contains('sessions')) {
+        console.log('[LocalDB] Creating sessions store');
+        db.createObjectStore('sessions');  
+      }
+
+      console.log('[LocalDB] Database upgrade completed');
     }
   });
 
@@ -68,7 +88,7 @@ export class LocalDatabase {
       const user = await db.getFromIndex('users', 'by-username', username);
       return !!user;
     } catch (error) {
-      console.error('Error checking username:', error);
+      console.error('[LocalDB] Error checking username:', error);
       return false;
     }
   }
@@ -79,7 +99,7 @@ export class LocalDatabase {
       const user = await db.getFromIndex('users', 'by-email', email);
       return !!user;
     } catch (error) {
-      console.error('Error checking email:', error);
+      console.error('[LocalDB] Error checking email:', error);
       return false;
     }
   }
@@ -87,7 +107,7 @@ export class LocalDatabase {
   // 创建本地用户记录
   async createLocalUser(userData: LocalUserCreation): Promise<LocalUser> {
     const db = await this.dbPromise;
-    const tempId = crypto.randomUUID(); // 临时ID，后续会被服务器ID替换
+    const tempId = crypto.randomUUID();
 
     try {
       // 检查用户名和邮箱
@@ -123,34 +143,34 @@ export class LocalDatabase {
       if (error instanceof DatabaseError) {
         throw error;
       }
-      console.error('Error creating local user:', error);
+      console.error('[LocalDB] Error creating local user:', error);
       throw new DatabaseError('Failed to create local user', 'CREATE_USER_FAILED');
     }
   }
 
   // 使用服务器返回的数据更新本地用户
   async updateUserAfterSync(localUser: LocalUser, serverUser: User): Promise<LocalUser> {
+    console.log('[LocalDB] Starting updateUserAfterSync', { localUser, serverUser });
     const db = await this.dbPromise;
     const tx = db.transaction(['users'], 'readwrite');
     const userStore = tx.objectStore('users');
 
     try {
-      // 1. 构建更新后的记录
       const updatedUser: LocalUser = {
-        ...localUser,           // 保持本地数据
-        id: serverUser.id,      // 新ID
+        ...serverUser,
         local_id: serverUser.id,
         is_synced: true,
-        pending_sync: false
+        pending_sync: false,
+        preferences: serverUser.preferences || localUser.preferences
       };
 
-      // 2. 使用事务原子操作
-      await userStore.delete(localUser.id);    // 删除旧ID的记录
-      await userStore.add(updatedUser);        // 添加新ID的记录
+      await userStore.put(updatedUser);
       await tx.done;
-
+      
+      console.log('[LocalDB] User updated successfully:', updatedUser);
       return updatedUser;
     } catch (error) {
+      console.error('[LocalDB] Error updating user:', error);
       await tx.abort();
       throw error;
     }
@@ -158,53 +178,75 @@ export class LocalDatabase {
 
   // 获取用户
   async getUser(userId: string): Promise<LocalUser | undefined> {
+    console.log('[LocalDB] Getting user with ID:', userId);
     const db = await this.dbPromise;
-    return db.get('users', userId);
+    const user = await db.get('users', userId);
+    console.log('[LocalDB] Retrieved user:', user);
+    return user;
   }
 
   // 保存会话
   async saveSession(token: SessionToken): Promise<void> {
+    console.log('[LocalDB] Saving session');
     const db = await this.dbPromise;
     await db.put('sessions', {
-      key: 'current', // Add key here
       token,
       timestamp: new Date()
-    }, 'current');
+    }, 'current');  
+    console.log('[LocalDB] Session saved');
   }
 
   // 获取会话
   async getSession(): Promise<SessionToken | null> {
+    console.log('[LocalDB] Getting session');
     const db = await this.dbPromise;
     const session = await db.get('sessions', 'current');
+    console.log('[LocalDB] Retrieved session:', session);
     return session ? session.token : null;
   }
 
   // 设置当前用户
   async setCurrentUser(userId: string): Promise<void> {
+    console.log('[LocalDB] Setting current user:', userId);
     const db = await this.dbPromise;
-    await db.put('currentUser', {
-      key: 'current', // Add key here
-      userId,
-      lastAccess: new Date()
-    }, 'current');
+    const tx = db.transaction('currentUser', 'readwrite');
+    const store = tx.objectStore('currentUser');
+    
+    try {
+      // 只使用一个固定的 key: 'current'
+      await store.put({
+        userId,
+        lastAccess: new Date()
+      }, 'current');
+      
+      await tx.done;
+      console.log('[LocalDB] Current user set successfully');
+    } catch (error) {
+      console.error('[LocalDB] Error setting current user:', error);
+      await tx.abort();
+      throw error;
+    }
   }
 
   // 获取当前用户
   async getCurrentUser(): Promise<{ userId: string; lastAccess: Date; } | undefined> {
+    console.log('[LocalDB] Getting current user');
     const db = await this.dbPromise;
-    const currentUser = await db.get('currentUser', 'current');
-    // 返回之前检查 currentUser 是否存在
-    if (currentUser) {
-        return {
-            userId: currentUser.userId,
-            lastAccess: currentUser.lastAccess
-        };
+    try {
+      const currentUser = await db.get('currentUser', 'current');
+      console.log('[LocalDB] Retrieved current user:', currentUser);
+      return currentUser;
+    } catch (error) {
+      console.error('[LocalDB] Error getting current user:', error);
+      return undefined;
     }
-    return undefined;
   }
+
   async clearSession(): Promise<void> {
+    console.log('[LocalDB] Clearing session');
     const db = await this.dbPromise;
-    await db.clear('sessions');
+    await db.delete('sessions', 'current');
+    console.log('[LocalDB] Session cleared');
   }
 }
 

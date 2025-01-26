@@ -1,75 +1,50 @@
 // src/components/shared/app-initializer.tsx
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
-import { useAppStore } from '@/stores/app.store';
 import { useUserStore } from '@/stores/user.store';
-import { useSessionStore } from '@/stores/session.store';
 
 export function AppInitializer() {
   const navigate = useNavigate();
-  // const location = useLocation();
-  
-  const { isInitializing, error, initializeApp, clearError, isInitialized } = useAppStore();
-  // const { loadLocalUser } = useUserStore();
-  // const { validateSession } = useSessionStore();
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await initializeApp(); // 只调用一次初始化
-        console.log("initializeApp is called");
-        // 根据 redirectPath 进行导航
-        const { redirectPath } = useAppStore.getState();
-        if (redirectPath) {
-          navigate(redirectPath, { replace: true });
-        }
-      } catch (err) {
-        console.error('App initialization failed:', err);
-      }
-    };
-    if (!isInitialized) {
-      initialize();
-    }
-  }, [initializeApp, navigate]);
+  const { currentUser, isLoading, error, loadLocalUser } = useUserStore();
 
-  // 加载状态
-  if (isInitializing) {
+  // 只在组件挂载时加载一次用户数据
+  useEffect(() => {
+    console.log('[AppInitializer] Loading user data');
+    loadLocalUser().catch(err => {
+      console.error('[AppInitializer] Failed to load user:', err);
+    });
+  }, []); // 空依赖数组，只在组件挂载时运行
+
+  // 监听用户状态变化，处理导航
+  useEffect(() => {
+    if (!isLoading) {
+      console.log('[AppInitializer] User state updated, currentUser:', currentUser);
+      if (currentUser) {
+        navigate('/dashboard');
+      } else {
+        navigate('/landing');
+      }
+    }
+  }, [currentUser, isLoading, navigate]);
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-lg text-muted-foreground">
-            Loading...
-          </p>
-        </div>
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
-  // 错误状态
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Alert variant="destructive" className="max-w-xl">
-          <AlertTitle>Failed to Load</AlertTitle>
-          <AlertDescription className="mt-2">
-            <p className="mb-4">{error}</p>
-            <button 
-              onClick={() => {
-                clearError();
-                initializeApp();
-              }}
-              className="mt-4 text-sm font-medium underline hover:text-primary"
-            >
-              Retry
-            </button>
-          </AlertDescription>
-        </Alert>
-      </div>
+      <Alert variant="destructive" className="m-4">
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
     );
   }
 
-  // 正常情况下不渲染任何内容
   return null;
 }

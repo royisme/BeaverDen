@@ -1,7 +1,11 @@
 from sqlalchemy.orm import Session
-from app.models.finance import FinanceAccount, FinanceTransaction
+from app.models.finance import FinanceAccount
+from app.models.transaction import Transaction
 from app.models.user import User
-from app.api.v1.endpoints.api_models import FinanceAccountCreate, FinanceAccountUpdate, FinanceTransactionCreate, FinanceTransactionUpdate
+from app.api.v1.endpoints.api_models import (
+    FinanceAccountCreate, FinanceAccountUpdate,
+    TransactionCreate, TransactionUpdate
+)
 from fastapi import HTTPException
 
 class FinanceService:
@@ -54,9 +58,9 @@ class FinanceService:
         ).first()
         if not account:
             raise HTTPException(status_code=404, detail="Account not found")
-        return self.db.query(FinanceTransaction).filter(FinanceTransaction.account_id == account_id).all()
+        return self.db.query(Transaction).filter(Transaction.account_id == account_id).all()
 
-    def create_transaction(self, transaction_data: FinanceTransactionCreate, user: User) -> FinanceTransaction:
+    def create_transaction(self, transaction_data: TransactionCreate, user: User) -> Transaction:
         account = self.db.query(FinanceAccount).filter(
             FinanceAccount.id == transaction_data.account_id,
             FinanceAccount.user_id == user.id
@@ -64,7 +68,7 @@ class FinanceService:
         if not account:
             raise HTTPException(status_code=404, detail="Account not found")
 
-        transaction = FinanceTransaction(
+        transaction = Transaction(
             **transaction_data.dict()
         )
         self.db.add(transaction)
@@ -72,9 +76,9 @@ class FinanceService:
         self.db.refresh(transaction)
         return transaction
 
-    def update_transaction(self, transaction_id: str, transaction_data: FinanceTransactionUpdate, user: User) -> FinanceTransaction:
-        transaction = self.db.query(FinanceTransaction).filter(
-            FinanceTransaction.id == transaction_id
+    def update_transaction(self, transaction_id: str, transaction_data: TransactionUpdate, user: User) -> Transaction:
+        transaction = self.db.query(Transaction).filter(
+            Transaction.id == transaction_id
         ).first()
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
@@ -94,8 +98,8 @@ class FinanceService:
         return transaction
 
     def delete_transaction(self, transaction_id: str, user: User) -> None:
-        transaction = self.db.query(FinanceTransaction).filter(
-            FinanceTransaction.id == transaction_id
+        transaction = self.db.query(Transaction).filter(
+            Transaction.id == transaction_id
         ).first()
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")

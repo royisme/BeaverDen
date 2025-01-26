@@ -1,8 +1,18 @@
 from datetime import datetime
-from sqlalchemy import Column, String, ForeignKey, DateTime, Numeric, Enum
+from sqlalchemy import Column, String, ForeignKey, DateTime, Numeric, Enum, Text, Index
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.models.base import Base
-from app.models.enums import Currency, FinanceAccountType, FinanceAccountCardType, FinanceBankName, FinanceAccountStatus
+from app.models.enums import (
+    Currency, 
+    FinanceAccountType, 
+    FinanceAccountCardType, 
+    FinanceBankName, 
+    FinanceAccountStatus
+)
+import uuid
+
+def generate_uuid():
+    return str(uuid.uuid4())
 
 class FinanceAccount(Base):
     __tablename__ = "finance_account"
@@ -20,11 +30,22 @@ class FinanceAccount(Base):
         default=FinanceAccountStatus.ACTIVE,
         nullable=False
     )
-    user: Mapped["User"] = relationship(backref="finance_accounts")
-
-    transactions: Mapped[list["FinanceTransaction"]] = relationship(
-        "FinanceTransaction",
-        backref="account",
+    
+    user: Mapped["User"] = relationship("User", back_populates="finance_accounts")
+    transactions: Mapped[list["Transaction"]] = relationship(
+        "Transaction",
+        foreign_keys="Transaction.account_id",
+        back_populates="account",
+        cascade="all, delete-orphan"
+    )
+    linked_transactions: Mapped[list["Transaction"]] = relationship(
+        "Transaction",
+        foreign_keys="Transaction.linked_account_id",
+        back_populates="linked_account"
+    )
+    import_batches: Mapped[list["ImportBatch"]] = relationship(
+        "ImportBatch",
+        back_populates="account",
         cascade="all, delete-orphan"
     )
 
@@ -42,25 +63,27 @@ class FinanceAccount(Base):
             "status": self.status.value
         }
 
-class FinanceTransaction(Base):
-    __tablename__ = "finance_transaction"
+class Budget(Base):
+    __tablename__ = "budget"
 
-    account_id: Mapped[str] = mapped_column(String(36), ForeignKey("finance_account.id"), nullable=False)
-    date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    user_id: Mapped[str] = mapped_column(String(36), ForeignKey("user.id"), nullable=False)
     amount: Mapped[float] = mapped_column(Numeric(15, 2), nullable=False)
+    period_type: Mapped[str] = mapped_column(String(50), nullable=False)  # monthly, weekly, yearly
     category: Mapped[str] = mapped_column(String(255), nullable=True)
-    merchant: Mapped[str] = mapped_column(String(255), nullable=True)
-    description: Mapped[str] = mapped_column(String(500), nullable=True)
-    type: Mapped[str] = mapped_column(String(50), nullable=False)
+    start_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    end_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    
+    user: Mapped["User"] = relationship("User", back_populates="budgets")
 
     def to_dict(self):
         return {
             "id": self.id,
-            "accountId": self.account_id,
-            "date": self.date.isoformat(),
+            "name": self.name,
+            "userId": self.user_id,
             "amount": float(self.amount),
+            "periodType": self.period_type,
             "category": self.category,
-            "merchant": self.merchant,
-            "description": self.description,
-            "type": self.type
-        } 
+            "startDate": self.start_date.isoformat() if self.start_date else None,
+            "endDate": self.end_date.isoformat() if self.end_date else None
+        }

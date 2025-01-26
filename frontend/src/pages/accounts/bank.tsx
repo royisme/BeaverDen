@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import { FinanceAccount, FinanceAccountType, FinanceBankName, FinanceAccountStatus, FinanceAccountCardType } from "@/types/finance"
 
-import { AccountList } from "@/pages/finance/_components/account-list"
+import { AccountList } from "@/pages/accounts/_components/account-list"
 import { useFinanceStore } from "@/stores/finance.store"
 import { Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AccountForm } from "./_components/account-form";
+import { AccountForm } from "@/pages/accounts/_components/account-form";
 
 export default function AccountPage(): React.ReactNode {
   const { accounts, fetchAccounts, addAccount } = useFinanceStore();

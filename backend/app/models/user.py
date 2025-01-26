@@ -3,12 +3,15 @@ from datetime import datetime, timezone
 from typing import Optional, List
 from sqlalchemy import String, Boolean, DateTime, Text, Enum as SQLEnum, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.models.base import Base
+from app.models.enums import AccountStatus, Language, Currency, Theme
+from app.models.finance import FinanceAccount, Budget
+from app.models.transaction import Transaction, TransactionCategory, ImportBatch
+
 from passlib.context import CryptContext
 
 
-from app.models.base import Base
-
-from app.models.enums import AccountStatus, Language, Currency, Theme
 # 密码加密上下文
 pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 
@@ -31,7 +34,7 @@ class User(Base):
     )
     last_login_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     
-    session: Mapped[List["UserSession"]] = relationship(
+    sessions: Mapped[List["UserSession"]] = relationship(
         "UserSession",
         uselist=True,
         cascade="all, delete-orphan",
@@ -53,7 +56,36 @@ class User(Base):
         back_populates="user"
     )
 
+    # 财务相关关系
+    finance_accounts: Mapped[List["FinanceAccount"]] = relationship(
+        "FinanceAccount",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    
+    transactions: Mapped[List["Transaction"]] = relationship(
+        "Transaction",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
 
+    categories: Mapped[List["TransactionCategory"]] = relationship(
+        "TransactionCategory",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    budgets: Mapped[List["Budget"]] = relationship(
+        "Budget",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    import_batches: Mapped[List["ImportBatch"]] = relationship(
+        "ImportBatch",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
     
     # 密码处理方法
     def set_password(self, password: str) -> None:
@@ -126,7 +158,10 @@ class UserSession(Base):
         String(36),
         ForeignKey("user.id", ondelete="CASCADE")
     )
-
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="sessions"
+    )
     
     # 基本设备信息
     device_id: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -161,26 +196,7 @@ class UserSession(Base):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     
-    # 关系
-    user: Mapped["User"] = relationship("User", back_populates="session")
-    
-    # # 辅助方法
-    # def update_device_info(self, device_info: dict) -> None:
-    #     """更新设备信息"""
-    #     for field, value in device_info.items():
-    #         setattr(self, field, value)
-    #     self.last_active_at = datetime.now(timezone.utc)
-    
-
-    @property
-    def is_expired(self) -> bool:
-        """检查会话是否过期"""
-        return datetime.now(timezone.utc) > self.token_expires_at
-    
-    def deactivate(self) -> None:
-        """停用会话"""
-        self.is_active = False
-    
+    # 辅助方法
     def update_device_info(self, device_info: dict) -> None:
         """更新设备信息
         
@@ -201,6 +217,15 @@ class UserSession(Base):
             if field in device_info:
                 setattr(self, value, device_info[field])
         self.last_active_at = datetime.now(timezone.utc)
+    
+    @property
+    def is_expired(self) -> bool:
+        """检查会话是否过期"""
+        return datetime.now(timezone.utc) > self.token_expires_at
+    
+    def deactivate(self) -> None:
+        """停用会话"""
+        self.is_active = False
     
     def __repr__(self) -> str:
         return f"<UserSession {self.id} for user {self.user_id} on device {self.device_name or self.device_id}>"
@@ -226,8 +251,6 @@ class UserSettings(Base):
     # 其他核心账户设置
     account_locked: Mapped[bool] = mapped_column(Boolean, default=False, comment="账户是否被锁定")
     last_password_reset_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True, comment="上次密码重置时间")
-
-    user: Mapped["User"] = relationship(back_populates="settings")
 
     def to_dict(self) -> dict:
         return {

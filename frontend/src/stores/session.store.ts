@@ -9,7 +9,7 @@ interface SessionState {
   isLoading: boolean;
   error: string | null;
 
-  setSession: (token: SessionToken) => Promise<void>;
+  setSession: (token: SessionToken) => Promise<SessionToken>;
   clearSession: () => Promise<void>;
   refreshSession: () => Promise<void>;
   validateSession: () => Promise<boolean>;
@@ -28,10 +28,13 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       // 更新状态
       set({ sessionToken: token });
       // 设置 API client 的 token
+      console.log('[SessionStore] Setting API client token:', token.accessToken);
       const apiClient = await getApiClient();
       apiClient.setAccessToken(token.accessToken);
+      return token;
     } catch (error) {
-      console.error('Failed to set session:', error);
+      console.error('[SessionStore] Failed to set session:', error);
+      set({ error: 'Failed to set session' });
       throw error;
     }
   },
@@ -40,13 +43,15 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     try {
       // 清除本地存储
       await localDb.clearSession();
-      // 清除状态
+      // 更新状态
       set({ sessionToken: null });
       // 清除 API client 的 token
+      console.log('[SessionStore] Clearing API client token');
       const apiClient = await getApiClient();
       apiClient.setAccessToken(null);
     } catch (error) {
-      console.error('Failed to clear session:', error);
+      console.error('[SessionStore] Failed to clear session:', error);
+      set({ error: 'Failed to clear session' });
       throw error;
     }
   },
@@ -61,7 +66,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
       const apiClient = await getApiClient();
       const newToken = await apiClient.refreshToken(currentToken.refreshToken);
-      
+      // 确保在设置 session 时也设置 api-client 的 token
       await get().setSession(newToken);
       set({ isLoading: false });
     } catch (error) {
@@ -107,13 +112,21 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   getSession: async () => {
     const token = get().sessionToken;
-    if (token) return token;
+    if (token) {
+      // 验证现有 token
+      const isValid = await get().validateSession();
+      if (isValid) return token;
+      return null;
+    }
 
     // 如果内存中没有，从本地存储加载
     const storedToken = await localDb.getSession();
     if (storedToken) {
       set({ sessionToken: storedToken });
-      return storedToken;
+      // 验证加载的 token
+      const isValid = await get().validateSession();
+      if (isValid) return storedToken;
+      return null;
     }
 
     return null;
