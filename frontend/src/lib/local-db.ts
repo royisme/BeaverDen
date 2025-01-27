@@ -1,7 +1,7 @@
 // src/lib/local-db.ts
 import { openDB, DBSchema } from 'idb';
 import { User, UserPreferences, LocalUser, SessionToken, LocalUserCreation } from '@/types/user';
-import { FinanceAccountStatus } from '@/types/finance';
+import { FinanceAccountStatus } from '@/types/finance/finance.type';
 import { AccountStatus } from '@/types/enums';
 
 const DB_NAME = 'beaveden';

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { FinanceTransaction, TransactionFormData } from '@/types/finance';
+import { FinanceTransaction, TransactionFormData } from '@/types/transaction/transaction.type';
 import {
   fetchTransactions,
   fetchTransaction,
@@ -29,14 +29,22 @@ export const useTransactions = () => {
     error,
   } = useQuery<BaseResponse<FinanceTransaction[]>>({
     queryKey: ['transactions'],
-    queryFn: fetchTransactions,
+    queryFn: async () => {
+      const data = await fetchTransactions();
+      return { status: 200, data, message: 'Success' };
+    },
+    staleTime: 5000, // 5 seconds
   });
 
   // 获取单个交易
   const useTransaction = (id: string) => {
     return useQuery<BaseResponse<FinanceTransaction>>({
-      queryKey: ['transactions', id],
-      queryFn: () => fetchTransaction(id),
+      queryKey: ['transaction', id],
+      queryFn: async () => {
+        const data = await fetchTransaction(id);
+        return { status: 200, data, message: 'Success' };
+      },
+      staleTime: 5000,
     });
   };
 
@@ -50,7 +58,7 @@ export const useTransactions = () => {
 
   // 更新交易
   const updateMutation = useMutation({
-    mutationFn: (transaction: FinanceTransaction) => updateTransaction(transaction),
+    mutationFn: (data: FinanceTransaction) => updateTransaction(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
     },
@@ -72,8 +80,5 @@ export const useTransactions = () => {
     createTransaction: createMutation.mutate,
     updateTransaction: updateMutation.mutate,
     deleteTransaction: deleteMutation.mutate,
-    createMutationResult: createMutation,
-    updateMutationResult: updateMutation,
-    deleteMutationResult: deleteMutation,
   };
 };

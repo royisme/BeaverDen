@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { FinanceAccount,  } from '@/types/finance';
+import { FinanceAccount,  } from '@/types/finance/finance.type';
 import { fetchAccounts, addAccount, updateAccount, deleteAccount } from '@/api/finance.api';
 
 interface FinanceState {

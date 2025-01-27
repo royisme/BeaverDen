@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { ImportBatch, ProcessedTransaction, TransactionCategory } from '@/types/finance';
+import { ImportBatch, ProcessedTransaction, TransactionCategory } from '@/types/transaction/transaction.type';
 import { cn } from '@/lib/utils';
 
 interface ImportPreviewProps {

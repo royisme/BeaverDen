@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Form, Input, DatePicker, InputNumber, Select, Button, Space } from 'antd';
-import { TransactionFormData, TransactionFormProps, TransactionType, TransactionStatus, TransactionCategory } from '@/types/finance';
+import { TransactionFormData, TransactionFormProps, TransactionType, TransactionStatus, TransactionCategory } from '@/types/finance/finance.type';
 import { useFinanceAccounts } from '@/hooks/useFinanceAccounts';
 import { Currency } from '@/types/enums';
 import dayjs from 'dayjs';

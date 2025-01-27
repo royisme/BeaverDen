@@ -11,7 +11,7 @@ import {
   processImportBatch,
   confirmImportBatch,
 } from '@/api/transaction.api';
-import { ImportBatch, ImportBatchResult } from '@/types/finance';
+import { ImportBatch, ImportBatchResult } from '@/types/transaction/transaction.type';
 
 export default function ImportPage() {
   const { accounts } = useFinanceStore();

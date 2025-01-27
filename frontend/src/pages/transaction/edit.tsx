@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TransactionForm } from '@/components/finance/TransactionForm';
 import { useTransactions } from '@/hooks/useTransactions';
-import { TransactionFormData } from '@/types/finance';
+import { TransactionFormData } from '@/types/transaction/transaction.type';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 

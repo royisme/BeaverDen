@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, or_
 from fastapi import HTTPException
 
 from app.models.finance import (

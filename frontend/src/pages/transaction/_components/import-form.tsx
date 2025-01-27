@@ -25,7 +25,8 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { BankStatementFormat, FinanceAccount } from '@/types/finance';
+import { FinanceAccount } from '@/types/finance/finance.type';
+import { BankStatementFormat } from '@/types/transaction/transaction.type';
 import { Upload } from 'lucide-react';
 
 const formSchema = z.object({

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { FinanceAccount } from '@/types/finance';
+import { FinanceAccount } from '@/types/finance/finance.type';
 import {
   fetchAccounts,
   addAccount,

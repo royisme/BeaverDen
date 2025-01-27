@@ -1,5 +1,9 @@
 import { getApiClient } from '@/lib/api-client';
-import { FinanceTransaction, ImportBatch, ImportBatchResult } from '@/types/finance';
+import { 
+  FinanceTransaction, 
+  ImportBatch, 
+  ImportBatchResult 
+} from '@/types/transaction/transaction.type';
 
 // 基本 CRUD 操作
 export async function fetchTransactions(params?: {
@@ -48,7 +52,6 @@ export async function createImportBatch(
   if (statementFormat) {
     formData.append('statementFormat', statementFormat);
   }
-
   return await apiClient.getClient().post('/transactions/import', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',

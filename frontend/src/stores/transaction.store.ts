@@ -1,6 +1,11 @@
 import { create } from 'zustand';
-import { FinanceTransaction } from '@/types/finance';
-import { fetchTransactions, addTransaction, updateTransaction, deleteTransaction } from '@/api/transaction.api';
+import { FinanceTransaction } from '@/types/transaction/transaction.type';
+import { 
+  fetchTransactions, 
+  addTransaction, 
+  updateTransaction, 
+  deleteTransaction 
+} from '@/api/transaction.api';
 
 interface TransactionState {
   transactions: FinanceTransaction[];

@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FinanceTransaction } from '@/types/finance';
+import { FinanceTransaction } from '@/types/transaction/transaction.type';
 import { formatDate, formatMoney } from '@/lib/utils';
 import { Edit2, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
