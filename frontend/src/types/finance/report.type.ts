@@ -6,6 +6,13 @@ export interface ReportSummaryItem {
   percentage: number;
 }
 
+export interface MonthlySummaryData {
+  month: string;
+  total_expense: number;
+  total_income: number;
+  net_change: number;
+}
+
 export interface ReportSummary {
   total: number;
   items: ReportSummaryItem[];

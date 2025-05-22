@@ -25,6 +25,66 @@ class TransactionService:
         self.db = db
         self.category_matcher = CategoryMatcher(db)
 
+    def get_monthly_summary(
+        self,
+        user: User,
+        year: int,
+        month: Optional[int] = None,
+        account_id: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """获取月度收支汇总"""
+        # Base query to filter by user and year
+        query = self.db.query(
+            func.strftime("%Y-%m", Transaction.transaction_date).label("month_year"),
+            Transaction.type,
+            func.sum(Transaction.amount).label("total_amount")
+        ).join(
+            FinanceAccount,
+            Transaction.account_id == FinanceAccount.id
+        ).filter(
+            FinanceAccount.user_id == user.id,
+            func.strftime("%Y", Transaction.transaction_date) == str(year)
+        )
+
+        # Optional filters
+        if month:
+            query = query.filter(func.strftime("%m", Transaction.transaction_date) == f"{month:02d}")
+        if account_id:
+            query = query.filter(Transaction.account_id == account_id)
+
+        # Group by month and transaction type
+        query = query.group_by("month_year", Transaction.type)
+        
+        # Order by month
+        query = query.order_by("month_year")
+
+        results = query.all()
+
+        # Process results into the desired format
+        summary_dict: Dict[str, Dict[str, Any]] = {}
+        for r_month_year, r_type, r_total_amount in results:
+            if r_month_year not in summary_dict:
+                summary_dict[r_month_year] = {
+                    "month": r_month_year,
+                    "total_expense": 0.0,
+                    "total_income": 0.0,
+                    "net_change": 0.0,
+                }
+            
+            amount = float(r_total_amount) if r_total_amount else 0.0
+            if r_type == TransactionType.EXPENSE:
+                summary_dict[r_month_year]["total_expense"] += amount
+            elif r_type == TransactionType.INCOME:
+                summary_dict[r_month_year]["total_income"] += amount
+        
+        # Calculate net_change and convert to list
+        final_summary = []
+        for month_data in summary_dict.values():
+            month_data["net_change"] = month_data["total_income"] - month_data["total_expense"]
+            final_summary.append(month_data)
+            
+        return final_summary
+
     def create_transaction(
         self,
         user: User,

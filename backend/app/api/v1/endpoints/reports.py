@@ -88,3 +88,25 @@ async def get_all_budgets_usage(
             continue
     
     return BaseResponse(data=usage_list)
+
+@router.get("/monthly-summary", response_model=BaseResponse[List[Dict[str, Any]]])
+async def get_monthly_summary_report(
+    year: int,
+    month: Optional[int] = Query(None, ge=1, le=12),
+    account_id: Optional[str] = Query(None),
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """获取月度收支汇总报表
+    
+    按月份汇总用户的收入和支出。
+    可以按年份、月份和账户进行筛选。
+    """
+    transaction_service = TransactionService(session)
+    summary = transaction_service.get_monthly_summary(
+        user=current_user,
+        year=year,
+        month=month,
+        account_id=account_id
+    )
+    return BaseResponse(data=summary)

@@ -9,9 +9,12 @@ import { FinanceAccount } from '@/types/finance/finance.type';
 import { formatCurrency, formatDate } from '@/lib/format';
 import { useToast } from '@/components/ui/use-toast';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const COLORS = [
-  '#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', 
+  '#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8',
   '#82CA9D', '#FF6B6B', '#6A7FDB', '#61DAFB', '#FF9AA2'
 ];
 
@@ -75,10 +78,22 @@ const ReportsOverview: React.FC = () => {
 
   return (
     <div className="container mx-auto py-6">
-      <h1 className="text-2xl font-bold mb-6">Financial Reports</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Financial Reports</h1>
+        <Link to="/app/reports/monthly-summary">
+          <Button variant="outline">View Monthly Summary</Button>
+        </Link>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div>
+      {/* Existing Category Summary Report Section */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Category Summary Report</CardTitle>
+          <CardDescription>Filters for category-based transaction summary.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div>
           <label className="block text-sm font-medium mb-1">Start Date</label>
           <DatePicker date={startDate} setDate={setStartDate} />
         </div>
@@ -132,72 +147,80 @@ const ReportsOverview: React.FC = () => {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle>
-                {transactionType === 'expense' ? 'Expense' : transactionType === 'income' ? 'Income' : 'Transaction'} Breakdown
-              </CardTitle>
-              <CardDescription>
-                {formatDate(reportData.period.start_date)} - {formatDate(reportData.period.end_date)}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    nameKey="name"
-                    label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
-                  >
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    formatter={(value: number) => formatCurrency(value)}
-                    labelFormatter={(name) => `Category: ${name}`}
-                  />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            {/* Pie Chart Card */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle>
+                  {transactionType === 'expense' ? 'Expense' : transactionType === 'income' ? 'Income' : 'Transaction'} Breakdown
+                </CardTitle>
+                <CardDescription>
+                  {formatDate(reportData.period.start_date)} - {formatDate(reportData.period.end_date)}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      nameKey="name"
+                      label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      formatter={(value: number) => formatCurrency(value)}
+                      labelFormatter={(name) => `Category: ${name}`}
+                    />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Summary</CardTitle>
-              <CardDescription>
-                Total: {formatCurrency(reportData.total)}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {reportData.items.map((item, index) => (
-                  <div key={item.category_id} className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      <div 
-                        className="w-3 h-3 rounded-full mr-2" 
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                      />
-                      <span>{item.category_name}</span>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium">{formatCurrency(Math.abs(item.total_amount))}</div>
-                      <div className="text-xs text-muted-foreground">{item.percentage.toFixed(1)}%</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+            {/* Summary Table Card */}
+            <Card className="lg:col-span-3">
+              <CardHeader>
+                <CardTitle>Detailed Summary</CardTitle>
+                <CardDescription>
+                  Total: {formatCurrency(reportData.total)}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Category</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead className="text-right">Transactions</TableHead>
+                      <TableHead className="text-right">Percentage</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {reportData.items.map((item) => (
+                      <TableRow key={item.category_id}>
+                        <TableCell>{item.category_name}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(Math.abs(item.total_amount))}</TableCell>
+                        <TableCell className="text-right">{item.count}</TableCell>
+                        <TableCell className="text-right">{item.percentage.toFixed(1)}%</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
+      {/* End of Existing Category Summary Report Section */}
     </div>
   );
 };

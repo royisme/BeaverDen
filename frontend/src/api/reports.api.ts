@@ -18,3 +18,24 @@ export async function fetchSummaryReport(
   const response = await apiClient.getClient().get('/reports/summary', { params });
   return response;
 }
+
+export interface FetchMonthlySummaryReportParams {
+  year: number;
+  month?: number;
+  account_id?: string;
+}
+
+export interface MonthlySummaryReportData {
+  month: string;
+  total_expense: number;
+  total_income: number;
+  net_change: number;
+}
+
+export async function fetchMonthlySummaryReport(
+  params: FetchMonthlySummaryReportParams
+): Promise<MonthlySummaryReportData[]> {
+  const apiClient = await getApiClient();
+  const response = await apiClient.getClient().get('/reports/monthly-summary', { params });
+  return response;
+}

@@ -22,6 +22,7 @@ const EditBudgetPage = lazy(() => import('@/pages/budget/edit'))
 
 // 报表相关页面
 const ReportsPage = lazy(() => import('@/pages/reports'))
+const MonthlySummaryReportPage = lazy(() => import('@/pages/reports/MonthlySummaryReport'))
 
 // 账户相关页面
 const BankAccountsPage = lazy(() => import('@/pages/accounts/bank'))
@@ -86,7 +87,10 @@ export function AppRoutes() {
         </Route>
 
         {/* 报表 */}
-        <Route path="reports" element={<ReportsPage />} />
+        <Route path="reports">
+          <Route index element={<ReportsPage />} />
+          <Route path="monthly-summary" element={<MonthlySummaryReportPage />} />
+        </Route>
 
         {/* 账户 */}
         <Route path="accounts">
