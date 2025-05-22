@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import system,  user_init, auth, users, accounts, transactions
+from app.api.v1.endpoints import system, user_init, auth, users, accounts, transactions, budgets, reports, category_rules, menus
 # 创建主路由器
 api_router = APIRouter()
 
@@ -37,4 +37,28 @@ api_router.include_router(
     transactions.router,
     prefix="/transactions",
     tags=["transactions"]
+)
+
+api_router.include_router(
+    budgets.router,
+    prefix="/budgets",
+    tags=["budgets"]
+)
+
+api_router.include_router(
+    reports.router,
+    prefix="/reports",
+    tags=["reports"]
+)
+
+api_router.include_router(
+    category_rules.router,
+    prefix="/category-rules",
+    tags=["category-rules"]
+)
+
+api_router.include_router(
+    menus.router,
+    prefix="/menus",
+    tags=["menus"]
 )

@@ -25,7 +25,7 @@ from app.core.exception_handlers import (
 )
 from app.api.v1.router import api_router
 from app.db.session import create_start_app_handler, create_stop_app_handler
-from app.db.migrations import check_and_upgrade_db
+from app.core.startup_manager import StartupManager
 
 # 初始化 Typer CLI
 cli = typer.Typer()
@@ -64,10 +64,10 @@ def register_routers(app: FastAPI) -> None:
     """注册应用路由"""
     from app.core.auth_jwt import AuthJWT
     from fastapi import Depends
-    
+
     # 添加全局依赖
     app.dependency_overrides[AuthJWT] = lambda: AuthJWT()
-    
+
     app.include_router(api_router, prefix="/api/v1")
 
 def create_app(config_path: str = None) -> FastAPI:
@@ -81,11 +81,11 @@ def create_app(config_path: str = None) -> FastAPI:
             logger.info("Runtime configuration initialized successfully")
         except Exception as e:
             logger.error(f"Failed to initialize runtime config: {str(e)}")
-            raise    
+            raise
 
     # 初始化基础配置
     settings.PROJECT_ROOT = get_project_root()
-    
+
     # 创建FastAPI实例
     app = FastAPI(
         title=settings.PROJECT_NAME,
@@ -93,7 +93,7 @@ def create_app(config_path: str = None) -> FastAPI:
         version=settings.VERSION
     )
 
-    
+
     # 配置核心功能
     configure_cors(
         app,
@@ -110,7 +110,15 @@ def create_app(config_path: str = None) -> FastAPI:
     # 添加生命周期事件
     app.add_event_handler("startup", create_start_app_handler(app))
     app.add_event_handler("shutdown", create_stop_app_handler(app))
-    app.add_event_handler("startup", check_and_upgrade_db)
+
+    # 创建启动管理器并存储在应用状态中
+    startup_manager = StartupManager(app)
+    app.state.startup_manager = startup_manager
+
+    # 添加系统初始化事件
+    @app.on_event("startup")
+    async def initialize_system():
+        await startup_manager.initialize_system()
 
     return app
 
@@ -123,16 +131,16 @@ def configure_logging() -> None:
         else settings.USER_DATA_PATH / "logs"
     )
     log_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # 日志文件路径
     log_file = log_dir / f"{settings.PROJECT_NAME}_{settings.ENV}.log"
-    
+
     # 日志格式配置
     formatter = logging.Formatter(
         fmt='%(asctime)s.%(msecs)03d [%(levelname)s] %(name)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
-    
+
     # 文件处理器（带日志轮转）
     file_handler = logging.handlers.RotatingFileHandler(
         log_file,
@@ -142,33 +150,33 @@ def configure_logging() -> None:
     )
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.DEBUG)
-    
+
     # 控制台处理器
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     console_handler.setLevel(logging.DEBUG)
-    
+
     # 配置根日志记录器
     root_logger = logging.getLogger()
     root_logger.handlers.clear()
     root_logger.setLevel(logging.DEBUG)
     root_logger.addHandler(file_handler)
     root_logger.addHandler(console_handler)
-    
+
     # 配置应用日志记录器
     app_logger = logging.getLogger('app')
     app_logger.setLevel(logging.DEBUG)
-    
+
     # 设置第三方库日志级别
     logging.getLogger("uvicorn.access").setLevel(logging.INFO)
     logging.getLogger("sqlalchemy.engine").setLevel(
         logging.INFO if settings.DB_ECHO else logging.WARNING
     )
-    
+
     # 输出一些初始日志以确认配置
     app_logger.debug("Debug logging enabled")
     app_logger.info(f"Logging configured in {settings.ENV} mode")
-    
+
     logger.info(f"Logging configured in {settings.ENV} mode")
     logger.debug("Debug logging enabled" if settings.DEBUG else "Debug logging disabled")
 
@@ -191,7 +199,7 @@ def start_dev(
     """启动开发服务器"""
     configure_logging()
     app = create_app()
-    
+
     logger.info(f"Starting development server on port {port}")
     uvicorn.run(
         app,
@@ -206,14 +214,14 @@ def start_prod(config_path: str = typer.Argument(..., help="Path to runtime conf
     """启动生产服务器（供Electron调用）"""
     # 第一步：初始化配置和日志
     configure_logging()
-    
+
     # 第二步：创建应用实例
     config_path = os.path.join(config_path, "runtime-config.json")
     app = create_app(config_path)
-    
+
     # 第三步：配置信号处理器（必须在app创建之后）
     setup_signal_handlers(app)
-    
+
     # 第四步：获取运行时配置
     runtime_config = RuntimeConfigManager.get_instance()
     port,_ = runtime_config.get_network_config()

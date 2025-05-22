@@ -7,10 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ImportBatch } from '@/types/transaction/transaction.type';
+import { ImportBatch, ImportBatchStatus } from '@/types/transaction/transaction.type';
 import { formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface ImportBatchListProps {
   batches: ImportBatch[];
@@ -18,16 +19,16 @@ interface ImportBatchListProps {
 }
 
 export function ImportBatchList({ batches, onViewBatch }: ImportBatchListProps) {
-  const getStatusBadge = (status: string) => {
-    const statusMap: Record<string, { color: string; label: string }> = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'pending' },
-      processing: { color: 'bg-blue-100 text-blue-800', label: 'processing' },
-      completed: { color: 'bg-green-100 text-green-800', label: 'completed' },
-      error: { color: 'bg-red-100 text-red-800', label: 'error' },
+  const getStatusBadge = (status: ImportBatchStatus) => {
+    const statusMap: Record<ImportBatchStatus, { color: string; label: string }> = {
+      [ImportBatchStatus.PENDING]: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
+      [ImportBatchStatus.PROCESSING]: { color: 'bg-blue-100 text-blue-800', label: 'Processing' },
+      [ImportBatchStatus.COMPLETED]: { color: 'bg-green-100 text-green-800', label: 'Completed' },
+      [ImportBatchStatus.ERROR]: { color: 'bg-red-100 text-red-800', label: 'Error' },
     };
 
     const { color, label } = statusMap[status] || { color: 'bg-gray-100 text-gray-800', label: status };
-    return <Badge className={color}>{label}</Badge>;
+    return <Badge className={cn(color)}>{label}</Badge>;
   };
 
   return (
@@ -35,12 +36,12 @@ export function ImportBatchList({ batches, onViewBatch }: ImportBatchListProps) 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>fileName</TableHead>
-            <TableHead>account</TableHead>
-            <TableHead>status</TableHead>
-            <TableHead>processed</TableHead>
-            <TableHead>createdAt</TableHead>
-            <TableHead>action</TableHead>
+            <TableHead>File Name</TableHead>
+            <TableHead>Account</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Processed</TableHead>
+            <TableHead>Created At</TableHead>
+            <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

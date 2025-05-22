@@ -14,6 +14,7 @@ from app.models.transaction import (
     ImportBatch,
     RawTransaction
 )
+from app.models.category_rule import CategoryRule
 
 __all__ = [
     'Base',
@@ -31,5 +32,6 @@ __all__ = [
     'Transaction',
     'TransactionCategory',
     'ImportBatch',
-    'RawTransaction'
+    'RawTransaction',
+    'CategoryRule'
 ]

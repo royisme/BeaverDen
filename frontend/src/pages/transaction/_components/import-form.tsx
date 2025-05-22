@@ -28,6 +28,7 @@ import * as z from 'zod';
 import { FinanceAccount } from '@/types/finance/finance.type';
 import { BankStatementFormat } from '@/types/transaction/transaction.type';
 import { Upload } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   accountId: z.string({
@@ -77,17 +78,28 @@ export function ImportForm({ accounts, onSubmit, onClose, open }: ImportFormProp
     setDragActive(false);
 
     const file = e.dataTransfer.files[0];
-    if (file) {
-      form.setValue('file', file);
+    if (file && isValidFileType(file)) {
+      form.setValue('file', file, { shouldValidate: true });
     }
   };
 
   const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && isValidFileType(file)) {
       form.setValue('file', file, { shouldValidate: true });
     }
   };
+
+  const isValidFileType = (file: File) => {
+    const allowedTypes = [
+      'text/csv',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ];
+    return allowedTypes.includes(file.type);
+  };
+
+  const selectedFile = form.watch('file');
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -141,7 +153,7 @@ export function ImportForm({ accounts, onSubmit, onClose, open }: ImportFormProp
                     <SelectContent>
                       {Object.values(BankStatementFormat).map((format) => (
                         <SelectItem key={format} value={format}>
-                          {format.toUpperCase()}
+                          {format.replace(/_/g, ' ')}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -154,38 +166,40 @@ export function ImportForm({ accounts, onSubmit, onClose, open }: ImportFormProp
             <FormField
               control={form.control}
               name="file"
-              render={({ field: { value, ...field } }) => (
+              render={({ field: { value, onChange, ...field } }) => (
                 <FormItem>
-                  <FormLabel>Statement File</FormLabel>
+                  <FormLabel>File</FormLabel>
                   <FormControl>
                     <div
-                      className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                        dragActive ? 'border-primary bg-primary/5' : 'border-input'
-                      }`}
+                      className={cn(
+                        "border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors",
+                        dragActive ? "border-primary bg-primary/5" : "border-muted",
+                        "hover:border-primary hover:bg-primary/5"
+                      )}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
-                      onClick={() => document.getElementById('file-input')?.click()}
+                      onClick={() => document.getElementById('file-upload')?.click()}
                     >
-                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                      <div className="mt-4">
-                        <p className="text-sm text-gray-600">
-                          {value?.name || 'Drag and drop your file here, or click to select'}
-                        </p>
-                      </div>
                       <input
-                        id="file-input"
+                        id="file-upload"
                         type="file"
                         className="hidden"
-                        accept=".csv,.xlsx,.xls"
+                        accept=".csv,.xls,.xlsx"
+                        onChange={handleFileChange}
                         {...field}
-                        ref={field.ref}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          handleFileChange(e);
-                        }}
-                        value=""
                       />
+                      <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
+                      <div className="mt-4 text-sm text-muted-foreground">
+                        {selectedFile ? (
+                          <p className="font-medium text-primary">{selectedFile.name}</p>
+                        ) : (
+                          <>
+                            <p className="font-medium">Click to upload or drag and drop</p>
+                            <p>CSV, XLS, or XLSX (max. 10MB)</p>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -194,7 +208,7 @@ export function ImportForm({ accounts, onSubmit, onClose, open }: ImportFormProp
             />
 
             <div className="flex justify-end space-x-2">
-              <Button variant="outline" type="button" onClick={onClose}>
+              <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
               <Button type="submit">Import</Button>

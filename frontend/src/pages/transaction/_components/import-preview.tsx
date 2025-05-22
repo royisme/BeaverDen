@@ -43,22 +43,71 @@ export function ImportPreview({ batch, transactions, onConfirm, onCancel }: Impo
   };
 
   const getCategoryBadge = (category: TransactionCategory) => {
-    const categoryMap: Record<TransactionCategory, { color: string; label: string }> = {
-      [TransactionCategory.TRANSFER]: { color: 'bg-purple-100 text-purple-800', label: 'Transfer' },
-      [TransactionCategory.PAYMENT]: { color: 'bg-blue-100 text-blue-800', label: 'Payment' },
-      [TransactionCategory.BILL_PAYMENT]: { color: 'bg-yellow-100 text-yellow-800', label: 'Bill Payment' },
-      [TransactionCategory.UTILITY]: { color: 'bg-orange-100 text-orange-800', label: 'Utility' },
-      [TransactionCategory.GROCERY]: { color: 'bg-green-100 text-green-800', label: 'Grocery' },
-      [TransactionCategory.DINING]: { color: 'bg-red-100 text-red-800', label: 'Dining' },
-      [TransactionCategory.SHOPPING]: { color: 'bg-pink-100 text-pink-800', label: 'Shopping' },
-      [TransactionCategory.GAS]: { color: 'bg-gray-100 text-gray-800', label: 'Gas' },
-      [TransactionCategory.ENTERTAINMENT]: { color: 'bg-indigo-100 text-indigo-800', label: 'Entertainment' },
-      [TransactionCategory.PAYROLL]: { color: 'bg-teal-100 text-teal-800', label: 'Payroll' },
-      [TransactionCategory.OTHER]: { color: 'bg-gray-100 text-gray-800', label: 'Other' },
+    const categoryMap: Record<string, { color: string; label: string }> = {
+      // Income
+      [TransactionCategory.INCOME]: { color: 'bg-green-100 text-green-800', label: 'Income' },
+      [TransactionCategory.INCOME_SALARY]: { color: 'bg-green-100 text-green-800', label: 'Salary' },
+      [TransactionCategory.INCOME_BONUS]: { color: 'bg-green-100 text-green-800', label: 'Bonus' },
+      [TransactionCategory.INCOME_INVESTMENT]: { color: 'bg-green-100 text-green-800', label: 'Investment Income' },
+      [TransactionCategory.INCOME_REFUND]: { color: 'bg-green-100 text-green-800', label: 'Refund' },
+      [TransactionCategory.INCOME_OTHER]: { color: 'bg-green-100 text-green-800', label: 'Other Income' },
+      
+      // Transport
+      [TransactionCategory.TRANSPORT]: { color: 'bg-blue-100 text-blue-800', label: 'Transport' },
+      [TransactionCategory.TRANSPORT_FUEL]: { color: 'bg-blue-100 text-blue-800', label: 'Fuel' },
+      [TransactionCategory.TRANSPORT_PARKING]: { color: 'bg-blue-100 text-blue-800', label: 'Parking' },
+      [TransactionCategory.TRANSPORT_PUBLIC]: { color: 'bg-blue-100 text-blue-800', label: 'Public Transport' },
+      [TransactionCategory.TRANSPORT_TAXI]: { color: 'bg-blue-100 text-blue-800', label: 'Taxi' },
+      [TransactionCategory.TRANSPORT_MAINTENANCE]: { color: 'bg-blue-100 text-blue-800', label: 'Maintenance' },
+      
+      // Dining
+      [TransactionCategory.DINING]: { color: 'bg-orange-100 text-orange-800', label: 'Dining' },
+      [TransactionCategory.DINING_RESTAURANT]: { color: 'bg-orange-100 text-orange-800', label: 'Restaurant' },
+      [TransactionCategory.DINING_TAKEOUT]: { color: 'bg-orange-100 text-orange-800', label: 'Takeout' },
+      [TransactionCategory.DINING_CAFE]: { color: 'bg-orange-100 text-orange-800', label: 'Cafe' },
+      
+      // Shopping
+      [TransactionCategory.SHOPPING]: { color: 'bg-purple-100 text-purple-800', label: 'Shopping' },
+      [TransactionCategory.SHOPPING_GROCERY]: { color: 'bg-purple-100 text-purple-800', label: 'Grocery' },
+      [TransactionCategory.SHOPPING_CLOTHES]: { color: 'bg-purple-100 text-purple-800', label: 'Clothes' },
+      [TransactionCategory.SHOPPING_DIGITAL]: { color: 'bg-purple-100 text-purple-800', label: 'Digital' },
+      [TransactionCategory.SHOPPING_FURNITURE]: { color: 'bg-purple-100 text-purple-800', label: 'Furniture' },
+      
+      // Housing
+      [TransactionCategory.HOUSING]: { color: 'bg-yellow-100 text-yellow-800', label: 'Housing' },
+      [TransactionCategory.HOUSING_RENT]: { color: 'bg-yellow-100 text-yellow-800', label: 'Rent' },
+      [TransactionCategory.HOUSING_MORTGAGE]: { color: 'bg-yellow-100 text-yellow-800', label: 'Mortgage' },
+      [TransactionCategory.HOUSING_UTILITIES]: { color: 'bg-yellow-100 text-yellow-800', label: 'Utilities' },
+      [TransactionCategory.HOUSING_PROPERTY]: { color: 'bg-yellow-100 text-yellow-800', label: 'Property' },
+      
+      // Entertainment
+      [TransactionCategory.ENTERTAINMENT]: { color: 'bg-pink-100 text-pink-800', label: 'Entertainment' },
+      [TransactionCategory.ENTERTAINMENT_MOVIE]: { color: 'bg-pink-100 text-pink-800', label: 'Movie' },
+      [TransactionCategory.ENTERTAINMENT_GAME]: { color: 'bg-pink-100 text-pink-800', label: 'Game' },
+      [TransactionCategory.ENTERTAINMENT_SPORTS]: { color: 'bg-pink-100 text-pink-800', label: 'Sports' },
+      
+      // Healthcare
+      [TransactionCategory.HEALTHCARE]: { color: 'bg-red-100 text-red-800', label: 'Healthcare' },
+      [TransactionCategory.HEALTHCARE_MEDICAL]: { color: 'bg-red-100 text-red-800', label: 'Medical' },
+      [TransactionCategory.HEALTHCARE_INSURANCE]: { color: 'bg-red-100 text-red-800', label: 'Insurance' },
+      
+      // Education
+      [TransactionCategory.EDUCATION]: { color: 'bg-indigo-100 text-indigo-800', label: 'Education' },
+      [TransactionCategory.EDUCATION_TUITION]: { color: 'bg-indigo-100 text-indigo-800', label: 'Tuition' },
+      [TransactionCategory.EDUCATION_BOOKS]: { color: 'bg-indigo-100 text-indigo-800', label: 'Books' },
+      [TransactionCategory.EDUCATION_COURSE]: { color: 'bg-indigo-100 text-indigo-800', label: 'Course' },
+      
+      // Transfer
+      [TransactionCategory.TRANSFER]: { color: 'bg-gray-100 text-gray-800', label: 'Transfer' },
+      [TransactionCategory.TRANSFER_IN]: { color: 'bg-gray-100 text-gray-800', label: 'Transfer In' },
+      [TransactionCategory.TRANSFER_OUT]: { color: 'bg-gray-100 text-gray-800', label: 'Transfer Out' },
+      
+      // Other
+      [TransactionCategory.OTHER]: { color: 'bg-gray-100 text-gray-800', label: 'Other' }
     };
 
-    const { color, label } = categoryMap[category] || categoryMap[TransactionCategory.OTHER];
-    return <Badge className={color}>{label}</Badge>;
+    const { color, label } = categoryMap[category] || { color: 'bg-gray-100 text-gray-800', label: category };
+    return <Badge className={cn(color)}>{label}</Badge>;
   };
 
   const formatAmount = (amount: string, direction: 'inflow' | 'outflow'): string => {

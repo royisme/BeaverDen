@@ -16,12 +16,14 @@ from app.models.transaction import (
 )
 from app.models.enums import TransactionType, TransactionStatus
 from app.models.user import User
+from app.services.category_matcher import CategoryMatcher
 
 logger = logging.getLogger(__name__)
 
 class TransactionService:
     def __init__(self, db: Session):
         self.db = db
+        self.category_matcher = CategoryMatcher(db)
 
     def create_transaction(
         self,
@@ -43,7 +45,7 @@ class TransactionService:
             transfer_account_id = transaction_data.get("transfer_account_id")
             if not transfer_account_id:
                 raise HTTPException(status_code=400, detail="Transfer account is required")
-            
+
             transfer_account = self.db.query(FinanceAccount).filter(
                 FinanceAccount.id == transfer_account_id,
                 FinanceAccount.user_id == user.id
@@ -52,21 +54,31 @@ class TransactionService:
                 raise HTTPException(status_code=404, detail="Transfer account not found")
 
         try:
+            # 如果没有指定分类，尝试自动分类
+            if 'category_id' not in transaction_data or not transaction_data['category_id']:
+                description = transaction_data.get('description', '')
+                merchant = transaction_data.get('merchant', '')
+
+                # 使用 CategoryMatcher 进行自动分类
+                category_id = self.category_matcher.match_category(user, description, merchant)
+                if category_id:
+                    transaction_data['category_id'] = category_id
+
             # 创建交易记录
             transaction = Transaction(**transaction_data)
             self.db.add(transaction)
-            
+
             # 更新账户余额
             self._update_account_balance(account, transaction)
-            
+
             # 如果是转账，创建对应的转入/转出记录
             if transaction.type in [TransactionType.TRANSFER_OUT, TransactionType.TRANSFER_IN]:
                 self._create_transfer_pair(transaction, account, transfer_account)
-            
+
             self.db.commit()
             self.db.refresh(transaction)
             return transaction
-            
+
         except Exception as e:
             self.db.rollback()
             logger.error(f"Error creating transaction: {str(e)}")
@@ -75,12 +87,13 @@ class TransactionService:
     def get_transaction(self, user: User, transaction_id: str) -> Transaction:
         """获取单个交易详情"""
         transaction = self.db.query(Transaction).join(
-            FinanceAccount
+            FinanceAccount,
+            Transaction.account_id == FinanceAccount.id
         ).filter(
             Transaction.id == transaction_id,
             FinanceAccount.user_id == user.id
         ).first()
-        
+
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
         return transaction
@@ -99,8 +112,10 @@ class TransactionService:
         search_term: Optional[str] = None
     ) -> List[Transaction]:
         """获取交易列表"""
+        # 使用明确的 join 条件
         query = self.db.query(Transaction).join(
-            FinanceAccount
+            FinanceAccount,
+            Transaction.account_id == FinanceAccount.id
         ).filter(
             FinanceAccount.user_id == user.id
         )
@@ -130,7 +145,7 @@ class TransactionService:
 
         # 按日期降序排序
         query = query.order_by(Transaction.transaction_date.desc())
-        
+
         return query.offset(skip).limit(limit).all()
 
     def update_transaction(
@@ -141,18 +156,18 @@ class TransactionService:
     ) -> Transaction:
         """更新交易信息"""
         transaction = self.get_transaction(user, transaction_id)
-        
+
         # 保存原始金额用于余额调整
         original_amount = transaction.amount
         original_type = transaction.type
-        
+
         try:
             # 更新交易字段
             for field, value in update_data.items():
                 setattr(transaction, field, value)
-            
+
             # 如果金额或类型发生变化，需要调整账户余额
-            if (original_amount != transaction.amount or 
+            if (original_amount != transaction.amount or
                 original_type != transaction.type):
                 self._adjust_account_balance(
                     transaction.account,
@@ -161,11 +176,11 @@ class TransactionService:
                     transaction.amount,
                     transaction.type
                 )
-            
+
             self.db.commit()
             self.db.refresh(transaction)
             return transaction
-            
+
         except Exception as e:
             self.db.rollback()
             logger.error(f"Error updating transaction: {str(e)}")
@@ -174,7 +189,7 @@ class TransactionService:
     def delete_transaction(self, user: User, transaction_id: str) -> None:
         """删除交易"""
         transaction = self.get_transaction(user, transaction_id)
-        
+
         try:
             # 恢复账户余额
             if transaction.type == TransactionType.EXPENSE:
@@ -185,10 +200,10 @@ class TransactionService:
                 # 删除关联的转账记录
                 if transaction.transfer_transaction:
                     self.db.delete(transaction.transfer_transaction)
-            
+
             self.db.delete(transaction)
             self.db.commit()
-            
+
         except Exception as e:
             self.db.rollback()
             logger.error(f"Error deleting transaction: {str(e)}")
@@ -204,7 +219,8 @@ class TransactionService:
     ) -> List[Dict]:
         """获取分类汇总"""
         query = self.db.query(
-            TransactionCategory.name,
+            TransactionCategory.id.label("category_id"),
+            TransactionCategory.name.label("category_name"),
             func.sum(Transaction.amount).label("total_amount"),
             func.count(Transaction.id).label("count")
         ).join(
@@ -228,7 +244,8 @@ class TransactionService:
         results = query.all()
         return [
             {
-                "category": result.name,
+                "category_id": result.category_id,
+                "category_name": result.category_name,
                 "total_amount": float(result.total_amount),
                 "count": result.count
             }
@@ -270,10 +287,10 @@ class TransactionService:
             )
             self.db.add(transfer_in)
             transaction.transfer_transaction_id = transfer_in.id
-            
+
             # 更新账户余额
             to_account.balance += transaction.amount
-        
+
         elif transaction.type == TransactionType.TRANSFER_IN:
             # 创建转出记录
             transfer_out = Transaction(
@@ -287,7 +304,7 @@ class TransactionService:
             )
             self.db.add(transfer_out)
             transaction.transfer_transaction_id = transfer_out.id
-            
+
             # 更新账户余额
             to_account.balance -= transaction.amount
 
@@ -309,7 +326,7 @@ class TransactionService:
             account.balance += old_amount
         elif old_type == TransactionType.TRANSFER_IN:
             account.balance -= old_amount
-        
+
         # 应用新的变化
         if new_type == TransactionType.EXPENSE:
             account.balance -= new_amount

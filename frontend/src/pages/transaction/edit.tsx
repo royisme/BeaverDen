@@ -15,10 +15,14 @@ export default function EditTransactionPage() {
   const { data: transaction, isLoading } = useTransaction(id!);
 
   const handleSubmit = async (data: TransactionFormData) => {
-    if (!id) return;
+    if (!id || !transaction?.data) return;
     
     try {
-      await updateTransaction({ id, data });
+      await updateTransaction({
+        ...transaction.data,
+        ...data,
+        updatedAt: new Date().toISOString(),
+      });
       toast({
         title: 'Success',
         description: 'Transaction has been updated',
@@ -47,7 +51,7 @@ export default function EditTransactionPage() {
     <div className="container mx-auto p-4 max-w-3xl">
       <h1 className="text-2xl font-bold mb-6">Edit Transaction</h1>
       <TransactionForm
-        initialData={transaction}
+        initialData={transaction?.data}
         onSubmit={handleSubmit}
         onCancel={() => navigate('/app/transaction')}
       />

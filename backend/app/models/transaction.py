@@ -28,11 +28,12 @@ class TransactionCategory(Base):
     color: Mapped[str] = mapped_column(String(7))
     system_category: Mapped[SystemTransactionCategory] = mapped_column(Enum(SystemTransactionCategory), nullable=True)
     is_system: Mapped[bool] = mapped_column(Boolean, default=False)
+    rules: Mapped[List["CategoryRule"]] = relationship("CategoryRule", back_populates="category")
 
     user: Mapped["User"] = relationship("User", back_populates="categories")
     parent: Mapped["TransactionCategory"] = relationship(
-        "TransactionCategory", 
-        remote_side="TransactionCategory.id", 
+        "TransactionCategory",
+        remote_side="TransactionCategory.id",
         back_populates="children"
     )
     children: Mapped[List["TransactionCategory"]] = relationship(
@@ -85,7 +86,7 @@ class Transaction(Base):
     linked_transaction = relationship("Transaction", remote_side="Transaction.id")
     category = relationship("TransactionCategory", back_populates="transactions")
     import_batch = relationship("ImportBatch", back_populates="transactions")
-    raw_transaction = relationship("RawTransaction", 
+    raw_transaction = relationship("RawTransaction",
         foreign_keys="RawTransaction.transaction_id",
         back_populates="transaction",
         uselist=False
@@ -169,7 +170,7 @@ class RawTransaction(Base):
     transaction_id = Column(String, ForeignKey("transaction.id", ondelete="SET NULL"))
 
     import_batch: Mapped["ImportBatch"] = relationship("ImportBatch", back_populates="raw_transactions")
-    transaction: Mapped["Transaction"] = relationship("Transaction", 
+    transaction: Mapped["Transaction"] = relationship("Transaction",
         foreign_keys=[transaction_id],
         back_populates="raw_transaction"
     )

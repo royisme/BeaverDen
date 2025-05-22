@@ -25,7 +25,7 @@ class User(Base):
     nickname: Mapped[Optional[str]] = mapped_column(String(50))
     email: Mapped[Optional[str]] = mapped_column(String(255), unique=True, index=True)
     avatar_path: Mapped[Optional[str]] = mapped_column(Text)
-    
+
     # 状态字段
     account_status: Mapped[AccountStatus] = mapped_column(
         SQLEnum(AccountStatus),
@@ -33,7 +33,7 @@ class User(Base):
         nullable=False
     )
     last_login_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
-    
+
     sessions: Mapped[List["UserSession"]] = relationship(
         "UserSession",
         uselist=True,
@@ -48,7 +48,7 @@ class User(Base):
         back_populates="user"
     )
 
-    
+
     settings: Mapped["UserSettings"] = relationship(  # 添加 UserSettings 关系
         "UserSettings",
         uselist=False,
@@ -62,7 +62,7 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
-    
+
     transactions: Mapped[List["Transaction"]] = relationship(
         "Transaction",
         back_populates="user",
@@ -86,40 +86,46 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
-    
+
+    category_rules: Mapped[List["CategoryRule"]] = relationship(
+        "CategoryRule",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
     # 密码处理方法
     def set_password(self, password: str) -> None:
         """设置用户密码"""
         self.password_hash = pwd_context.hash(password)
-    
+
     def verify_password(self, password: str) -> bool:
         """验证用户密码"""
         return pwd_context.verify(password, self.password_hash)
-    
+
     # 状态检查方法
     @property
     def is_active(self) -> bool:
         """检查用户是否处于活跃状态"""
         return self.account_status == AccountStatus.ACTIVE
-    
+
     def activate(self) -> None:
         """激活用户账户"""
         self.account_status = AccountStatus.ACTIVE
-    
+
     def suspend(self) -> None:
         """暂停用户账户"""
         self.account_status = AccountStatus.SUSPENDED
-    
+
     def soft_delete(self) -> None:
         """软删除用户账户"""
         self.account_status = AccountStatus.DELETED
-    
+
     # 登录相关方法
     def update_last_login(self) -> None:
         """更新最后登录时间"""
         self.last_login_at = datetime.now(timezone.utc)
 
-    
+
     # 新增方法
     def update_nickname(self, nickname: str) -> None:
         """更新用户昵称"""
@@ -129,7 +135,7 @@ class User(Base):
         """更新用户头像路径"""
         self.avatar_path = avatar_path
 
-    
+
     # 辅助方法
     def to_dict(self) -> dict:
         """转换为字典（重写基类方法以排除敏感信息）"""
@@ -148,11 +154,11 @@ class User(Base):
     def __repr__(self) -> str:
         """字符串表示"""
         return f"<User {self.username}>"
-    
+
 class UserSession(Base):
     """用户会话模型，存储会话和设备信息"""
     __tablename__ = "user_session"
-    
+
     # 用户关联
     user_id: Mapped[str] = mapped_column(
         String(36),
@@ -162,12 +168,12 @@ class UserSession(Base):
         "User",
         back_populates="sessions"
     )
-    
+
     # 基本设备信息
     device_id: Mapped[str] = mapped_column(String(255), nullable=False)
     device_name: Mapped[Optional[str]] = mapped_column(String(255))
     device_type: Mapped[Optional[str]] = mapped_column(String(50))
-    
+
     # 扩展设备信息
     os: Mapped[Optional[str]] = mapped_column(
         String(255),
@@ -185,7 +191,7 @@ class UserSession(Base):
         String(45),  # IPv6 地址最长45字符
         comment="最后已知IP地址"
     )
-    
+
     # 会话信息
     token: Mapped[str] = mapped_column(Text, nullable=False, index=True)
     token_expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
@@ -195,11 +201,11 @@ class UserSession(Base):
         onupdate=datetime.now(timezone.utc)
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    
+
     # 辅助方法
     def update_device_info(self, device_info: dict) -> None:
         """更新设备信息
-        
+
         Args:
             device_info: 包含设备信息字段的字典
         """
@@ -217,16 +223,16 @@ class UserSession(Base):
             if field in device_info:
                 setattr(self, value, device_info[field])
         self.last_active_at = datetime.now(timezone.utc)
-    
+
     @property
     def is_expired(self) -> bool:
         """检查会话是否过期"""
         return datetime.now(timezone.utc) > self.token_expires_at
-    
+
     def deactivate(self) -> None:
         """停用会话"""
         self.is_active = False
-    
+
     def __repr__(self) -> str:
         return f"<UserSession {self.id} for user {self.user_id} on device {self.device_name or self.device_id}>"
 
@@ -260,10 +266,10 @@ class UserSettings(Base):
             "accountLocked": self.account_locked,
             "lastPasswordResetAt": self.last_password_reset_at.isoformat() if self.last_password_reset_at else None,
         }
-    
+
     def __repr__(self) -> str:
         return f"<UserSettings for user {self.user_id}>"
-    
+
 class UserPreferences(Base):
     """user preferences model"""
     __tablename__ = "user_preferences"
